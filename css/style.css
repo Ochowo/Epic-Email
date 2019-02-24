@@ -177,3 +177,9 @@ footer {
     margin-top: 10%;
     border-radius: 4px;
 }
+.center-boxxx {
+margin:auto;
+}
+.boxx {
+    margin:10% auto 5% auto;
+}
