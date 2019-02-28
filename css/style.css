@@ -135,7 +135,7 @@ a {
  line-height: 1px;
 }
 footer {
-    margin-top: 2%;
+  
     height: 200px;
     background-color: #0067fc;
     padding:5% 10%;
@@ -500,4 +500,354 @@ th {
 }
 .btm{
     text-align: center;
+}
+.em-bnn .icon {
+    display: none;
+}
+#myTopnav {
+    overflow: hidden;
+  }
+
+/********************************Queries**********************/
+@media only screen and (max-width: 1200px) {
+    .pull-text {
+        margin-left: 8%;
+        font-size:45px;
+    }
+    .every {
+        font-size:45px;
+    }
+    .wel {
+        line-height:80px;
+    }
+    
+    .usern {
+        font-size: 12px;
+    }
+    .em-btn {
+        width: 38px;
+        padding:3%;
+    }
+    .mvv {
+        margin-left: 47%;
+    }
+    .mvvv {
+        margin-left: 52%;
+    }
+    .boxx {
+        margin-top: 5%;
+    }
+    #bxx {
+        margin-left: 25%;
+    }
+    
+}
+@media only screen and (max-width: 1024px) {
+    .container {
+        width: 100%;
+    }
+    footer {
+        height: 250px;
+    }
+    .top-sec {
+        height: 1000px;
+    }
+    .header {
+        height: 120px;
+        padding-top:40px;
+        padding-bottom: 0;
+    }
+    
+    .pull-text {
+        margin-top: 60%
+    }
+    .bxx {
+        margin-top: 60%;
+    }
+    .top-sec2 {
+        height: 1000px;
+    }
+    .shok {
+        width: 22%;
+    }
+    .baz {
+        width: 78%;
+    }
+    .search-container {
+        width: 60%;
+    }
+    .userp {
+        width:25%;
+    }
+    .sent, .recieve {
+        max-width: 600px;
+    }
+    .grppp {
+        font-size: 23px;
+    }
+    .cau,
+    .del {
+        font-size: 18px;
+    }
+    .crs {
+        font-size: 10px;
+    }
+
+}
+@media only screen and (max-width: 768px) {
+    .every {
+        font-size: 38px;
+    }
+    #bxx {
+        margin-left: 5%;
+    }
+    .em-bnn li {display: none;}
+    .em-bnn a.icon {
+        float:left;
+        display: block;
+    }
+    .em-bnn.responsive li {
+        position: relative;
+        color: #000;
+    }
+    .em-bnn.responsive .icon {
+        position: absolute;
+        top: 100px;
+        float: left;
+  }
+  .em-bnn.responsive li {
+        float: none;
+        display: block;
+        text-align: left;
+  }
+  .container2 {
+      display: block;
+  }
+  .lef-bo {
+      width:100%;
+  }
+ 
+  .em-bnn {
+      margin-bottom: 4%;
+  }
+  .barss {
+      font-size:30px;
+  }
+  .em-bnn li {
+    margin-top: 3%;
+}
+ .em-btn{
+     padding:0%;
+ }
+ .cs {
+     margin-top: 8%;
+     width:100px;
+    padding:1% 0;
+    margin-bottom:0;
+ }
+ .plus {
+    padding: 0 1%;
+    margin-right: 1%;
+}
+.mvvv {
+    margin-left: 49.5%;
+}
+.mvv {
+    margin-left: 49%;
+}
+.mv {
+    margin-left: 49.5%;
+}
+.bg {
+    margin-left: 47%;
+}
+.bgg {
+    margin-left: 45%;
+}
+.search-container{
+    display: none;
+}
+.flexboxx {
+    display: block;
+}
+.logo {
+width:auto;
+float: left;
+}
+.userp {
+    width:auto;
+    float: right;
+}
+.usern {
+    margin-left: 0;
+}
+.grp {
+    margin-top:4%;
+}
+.recieve {
+    width:450px;
+}
+#box23 {
+    overflow: hidden;
+}
+.crs {
+    width:120px;
+}
+.righ-bo {
+    width: 100%;
+}
+}
+@media only screen and (max-width: 480px) {
+    .top-sec {
+        background-image: url("bgm.png");
+        padding-top: 40%;
+    }
+    .tsd {
+        display:block;
+        padding: 12% 5% 0 5%;
+    }
+    .csb{
+        float:none;
+        width: 100%;
+        margin-top: 25%;
+    }
+    .csd {
+        float:none;
+        width:100%;
+        margin: auto;
+    
+    }
+    .pull-text,
+    .every{
+        font-size: 32px;
+    }
+    .pull-text {
+        margin-top:0;
+    }
+    .wel {
+        line-height: 20px;
+    }
+    .bxx {
+        margin-top:20%;
+    }
+    #bxx{
+        margin-left:3%;
+        margin-bottom:5%;
+    }
+    .resp{
+        z-index: -1;
+        position: absolute;
+        padding-bottom:0;
+        height: 250px;
+        font-size: 12px; 
+        text-align: center;
+    }
+    footer{
+        width:100%;
+    }
+    .navvv {
+        margin-top: 53%;
+    }
+    .header {
+        padding: 0 45px;
+        padding-top: 45px;
+        height: 100px;
+    }
+    .logo {
+        margin-top: 0;
+    }
+    .hco {
+        font-size: 27px;
+    }
+    .name, .role, .user-name, .fname, .lname, .email, .number, .password {
+        width: 90%;
+    }
+    .hd {
+        font-size: 12px;
+    }
+    .sign-form {
+        padding-top: 20px;
+    }
+    .cs {
+        margin-top: 15%;
+
+        width:70px;
+        font-size:12px;
+    }
+    .baz {
+        height: 400px;
+    }
+    .header4 {
+        padding: 5px 20px;
+    }
+    .bak {
+        margin-top: 3%;
+        
+    }
+    .bak img {
+        width: 100px;
+    }
+    .usern {
+        margin-left:5px; 
+    }
+    
+    .container2 {
+        padding: 0 5%;
+    }
+    .shok,
+    .righ-bo {
+        border-left:none;
+        font-size:12px;
+
+    }
+    .barss {
+        font-size: 20px;
+    }
+    .em-btn {
+        font-size: 10px;
+        padding: 1% 0;
+        width:23px;
+    }
+    #box23 {
+        width:90%;
+    }
+    
+    .grppp {
+        font-size: 25px;
+    }
+    .cay,
+    .rep,
+    .del {
+        font-size: 14px;
+    }
+    .crs {
+        width: 82px;
+        font-size: 10px;
+    }
+    .sender,
+    .reciever {
+        font-size: 15px;
+    }
+    .recieve,
+    .send {
+        width: 350px;
+    }
+    .po {
+        font-size: 19px;
+    }
+    .navvv {
+        margin-top: 35%;
+    }
+    
+}
+@media only screen and (max-width: 375px) {
+    #bxx {
+        margin-left: 2%;
+    }
+    .box {
+        width: 320px;
+    }
+    .recieve, .send {
+        width: 300px;
+    }  
 }
