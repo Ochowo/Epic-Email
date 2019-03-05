@@ -11,7 +11,7 @@ dotenv.config();
  */
 class Users {
   /**
-     * Signup
+     * User Signup
      *
      * @static
      * @param {object} req
@@ -42,6 +42,38 @@ class Users {
       data: [{
         token,
         user,
+      }],
+    });
+  }
+
+  static signin(req, res) {
+    const newUser = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+    const result = users.map(user => user.email);
+    if (result.includes(newUser.email) === false) {
+      return res.status(404).json({
+        status: 404,
+        error: 'Authentication failed. User not found',
+      });
+    }
+    const userDb = users.find(user => user.email === newUser.email);
+    const validPassword = bcrypt.compareSync(newUser.password, userDb.password);
+    if (!validPassword) {
+      return res.status(401).json({
+        status: 401,
+        error: 'Authentication failed. Wrong password',
+      });
+    }
+    const token = jwt.sign({ email: `${newUser.email}` }, process.env.SECRET, {
+      expiresIn: 86400, // expires in 24 hours
+    });
+    return res.status(200).json({
+      status: 200,
+      data: [{
+        token,
+        userDb,
       }],
     });
   }
