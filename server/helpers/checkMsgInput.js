@@ -34,6 +34,11 @@ const checkMsgInput = (req, res, next) => {
       status: 400,
       error: 'status cannot be empty',
     });
+  } else if (status !== 'draft' || status !== 'sent' || status !== 'read') {
+    res.status(400).json({
+      status: 400,
+      error: 'status can either be draft, sent or read',
+    });
   }
   next();
 };

@@ -15,8 +15,11 @@ class Messages {
       createdOn: new Date().toDateString(),
       subject: req.body.subject,
       message: req.body.message,
-      parentMessageId: decoded.userId,
+      parentMessageId:req.body.parentMessageId,
       status: req.body.status,
+      email:decoded.email,
+      senderId: decoded.userId,
+      receiverId: req.body.receiverId,
     };
     messages.push(message);
     return res.status(201).json({
@@ -24,6 +27,26 @@ class Messages {
       data: [{
         message,
       }],
+    });
+  }
+  static getAllMessages(req, res){
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const result = messages.filter(user => user.email === decoded.email);
+    console.log(result)
+    if(result < 1){ 
+      return res.status(401).json({
+        status: 401,
+        error: 'No messages for this user',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      data: {
+        result,
+      },
     });
   }
 }
