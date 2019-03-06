@@ -5,7 +5,7 @@ const users = [
     email: 'joan@gmail.com',
     firstName: 'Joan',
     lastName: 'Oche',
-    password: '$2b$10$cVDyHNgDvKXe4dwnA2y.TuWKFyK3vieDsd79kmJ1BHI.zUkUFPKPm'
+    password: '$2b$10$cVDyHNgDvKXe4dwnA2y.TuWKFyK3vieDsd79kmJ1BHI.zUkUFPKPm',
   },
   {
     id: 2,

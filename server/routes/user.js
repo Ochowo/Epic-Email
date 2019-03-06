@@ -1,5 +1,5 @@
 import express from 'express';
-import users from '../controllers/index';
+import { users } from '../controllers/index';
 import {
   validEmail, userExists, checkSignupInput, checkSigninInput,
 } from '../helpers/index';

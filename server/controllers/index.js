@@ -1,3 +1,4 @@
 import users from './Users';
+import messages from './Messages';
 
-export default users;
+export { users, messages };

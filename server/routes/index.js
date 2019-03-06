@@ -1,3 +1,4 @@
-import router from './user';
+import users from './user';
+import messages from './message';
 
-export default router;
+export { users, messages };
