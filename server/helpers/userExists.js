@@ -1,4 +1,4 @@
-import users from '../db/index';
+import users from '../db/users';
 
 const userExists = (req, res, next) => {
   const {

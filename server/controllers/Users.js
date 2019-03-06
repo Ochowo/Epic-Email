@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import users from '../db/index';
+import users from '../db/users';
 
 dotenv.config();
 /**
@@ -34,7 +34,7 @@ class Users {
       password: encryptedPassword,
     };
     users.push(user);
-    const token = jwt.sign({ email: `${user.email}` }, process.env.SECRET, {
+    const token = jwt.sign({ email: `${user.email}`, userId: `${user.id}` }, process.env.SECRET, {
       expiresIn: 86400, // expires in 24 hours
     });
     return res.status(201).json({
@@ -66,7 +66,7 @@ class Users {
         error: 'Authentication failed. Wrong password',
       });
     }
-    const token = jwt.sign({ email: `${newUser.email}` }, process.env.SECRET, {
+    const token = jwt.sign({ email: `${newUser.email}`, userId: `${userDb.id}` }, process.env.SECRET, {
       expiresIn: 86400, // expires in 24 hours
     });
     return res.status(200).json({
