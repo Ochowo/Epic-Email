@@ -11,4 +11,5 @@ router.get('/messages', isLoggedIn, messages.getAllMessages);
 router.get('/messages/unread', isLoggedIn, messages.getUnread);
 router.get('/messages/sent', isLoggedIn, messages.getSent);
 router.get('/messages/:id', isLoggedIn, messages.getSpecificEmail);
+router.delete('/messages/:id', isLoggedIn, messages.deleteEmail);
 export default router;

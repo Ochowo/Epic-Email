@@ -114,6 +114,34 @@ class Messages {
       },
     });
   }
+  static deleteEmail(req, res){
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const result = messages.filter(user => user.email === decoded.email);
+    const mail = messages.find(c => c.id === parseInt((req.params.id), 10));
+    const index = messages.indexOf(mail);
+    if(result < 1){ 
+      return res.status(401).json({
+        status: 401,
+        error: 'No message for this user',
+      });
+    }
+    if(!mail){
+      return res.status(404).json({
+        status: 404,
+        error: `message with id = ${req.params.id} not found for this user`,
+      });
+    }
+    messages.splice(index, 1);
+    return res.status(200).json({
+      status: 200,
+      data: {
+       message: 'email deleted succesfully',
+      },
+    });
+  }
   
 }
 export default Messages;
