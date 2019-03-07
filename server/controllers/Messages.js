@@ -68,6 +68,26 @@ class Messages {
       },
     });
   }
+  static getSent (req, res){
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const result = messages.filter(user => user.email === decoded.email);
+    const result2 = result.filter(msg => (msg.status === 'sent'));
+    if(result < 1){ 
+      return res.status(401).json({
+        status: 401,
+        error: 'No messages for this user',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      data: {
+        result2,
+      },
+    });
+  }
   
 }
 export default Messages;
