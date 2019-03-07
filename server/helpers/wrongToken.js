@@ -5,11 +5,11 @@ dotenv.config();
 
 const isLoggedIn = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
-  jwt.verify(token, process.env.SECRET, () => {
-    if (token === null || token === '' || token === undefined) {
+  jwt.verify(token, process.env.SECRET, (err) => {
+    if (err) {
       return res.status(401).json({
         status: 401,
-        error: 'No token provided.',
+        error: 'Failed to authenticate user token.',
       });
     }
     return next();

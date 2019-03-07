@@ -37,6 +37,6 @@ const checkSignUpInput = (req, res, next) => {
       error: 'password cannot be less than 6 characters',
     });
   }
-  next();
+  return next();
 };
 export default checkSignUpInput;
