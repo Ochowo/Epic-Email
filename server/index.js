@@ -8,7 +8,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/v1/auth', users);
 app.use('/api/v1', messages);
-
+app.get('/', (req, res) => {
+  res.send('Visit /api/v1 to view API cheers!!!');
+});
 const port = process.env.PORT || 8000;
 app.listen(process.env.PORT || 8000, () => console.log(`listening on port ${port}....`));
 export default app;
