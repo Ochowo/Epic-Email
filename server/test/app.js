@@ -205,6 +205,22 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
+    it('should not create a message if token is not provided', (done) => {
+      chai.request(app)
+        .post('/api/v1/messages')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          res.body.error.should.equal('No token provided.');
+          done();
+        });
+    });
   });
 
   // ====Get all Email==== //
