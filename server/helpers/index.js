@@ -4,7 +4,8 @@ import checkSignupInput from './checkSignupInput';
 import checkSigninInput from './checkSignInInput';
 import isLoggedIn from './isLoggedIn';
 import checkMsgInput from './checkMsgInput';
+import wrongToken from './wrongToken';
 
 export {
-  validEmail, userExists, checkSignupInput, checkSigninInput, isLoggedIn, checkMsgInput,
+  validEmail, userExists, checkSignupInput, checkSigninInput, isLoggedIn, checkMsgInput, wrongToken,
 };
