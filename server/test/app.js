@@ -20,10 +20,10 @@ const newUser = {
 };
 const invalidEmail = {
   email: 'ochowo2gmail.com',
-  firstName: 'Ochowo',
-  lastName: 'Ikongbeh',
+  firstName: 'Ethan',
+  lastName: 'Jones',
   password: 'password',
-}
+};
 const loginDetails = {
   email: 'ochowo@gmail.com',
   password: 'password',
@@ -66,7 +66,7 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not register a user if email is invalid', (done) => {
+    it('should not register a user if email is already in use', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signup')
         .send(invalidEmail)
@@ -205,38 +205,6 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not create a message if token is not provided', (done) => {
-      chai.request(app)
-        .post('/api/v1/messages')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not create message if token is wrong', (done) => {
-      chai.request(app)
-        .post('/api/v1/messages?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
   });
 
   // ====Get all Email==== //
@@ -253,38 +221,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.have.property('data');
           res.body.status.should.be.a('number');
           res.body.data.should.be.a('array');
-          done();
-        });
-    });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -307,38 +243,6 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/sent')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/sent?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
   });
 
   // ====Get all unread Email==== //
@@ -355,38 +259,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.have.property('data');
           res.body.status.should.be.a('number');
           res.body.data.should.be.a('array');
-          done();
-        });
-    });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/unread')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/unread?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -409,7 +281,7 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not fetch a specific message', (done) => {
+    it('should not fetch a specific order', (done) => {
       chai.request(app)
         .get(`/api/v1/messages/2000?token=${token}`)
         .end((err, res) => {
@@ -421,38 +293,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.have.property('error');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          done();
-        });
-    });
-    it('should not fetch a specific message if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/1')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not fetch a specific message if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/1?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -487,38 +327,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.have.property('error');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          done();
-        });
-    });
-    it('should not delete a specific message if token is not provided', (done) => {
-      chai.request(app)
-        .delete('/api/v1/messages/1')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not delete a specific message if token is wrong', (done) => {
-      chai.request(app)
-        .delete('/api/v1/messages/1?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
