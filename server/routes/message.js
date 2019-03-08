@@ -1,15 +1,15 @@
 import express from 'express';
 import { messages } from '../controllers/index';
 import {
-  isLoggedIn, checkMsgInput,
+  isLoggedIn, wrongToken, checkMsgInput,
 } from '../helpers/index';
 
 const router = express.Router();
 
-router.post('/messages', isLoggedIn, checkMsgInput, messages.newMessage);
-router.get('/messages', isLoggedIn, messages.getAllMessages);
-router.get('/messages/unread', isLoggedIn, messages.getUnread);
-router.get('/messages/sent', isLoggedIn, messages.getSent);
-router.get('/messages/:id', isLoggedIn, messages.getSpecificEmail);
-router.delete('/messages/:id', isLoggedIn, messages.deleteEmail);
+router.post('/messages', isLoggedIn, wrongToken, checkMsgInput, messages.newMessage);
+router.get('/messages', isLoggedIn, wrongToken, messages.getAllMessages);
+router.get('/messages/unread', isLoggedIn, wrongToken, messages.getUnread);
+router.get('/messages/sent', isLoggedIn, wrongToken, messages.getSent);
+router.get('/messages/:id', isLoggedIn, wrongToken, messages.getSpecificEmail);
+router.delete('/messages/:id', isLoggedIn, wrongToken, messages.deleteEmail);
 export default router;
