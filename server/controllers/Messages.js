@@ -10,22 +10,29 @@ class Messages {
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
-    const message = {
+    const {
+      subject,
+      message,
+      parentMessageId,
+      status,
+      receiverId,
+    } = req.body;
+    const newMessage = {
       id: messages.length + 1,
       createdOn: new Date().toDateString(),
-      subject: req.body.subject,
-      message: req.body.message,
-      parentMessageId: req.body.parentMessageId,
-      status: req.body.status,
       email: decoded.email,
       senderId: decoded.userId,
-      receiverId: req.body.receiverId,
+      subject,
+      message,
+      parentMessageId,
+      status,
+      receiverId,
     };
-    messages.push(message);
+    messages.push(newMessage);
     return res.status(201).json({
       status: 201,
       data: [{
-        message,
+        newMessage,
       }],
     });
   }
