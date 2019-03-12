@@ -843,6 +843,15 @@ float: left;
     .flexboxx {
         padding-top:5%; 
     } 
+    .top-sec2 {
+        height: 600px;
+    }
+    .ft {
+        height: 120px;
+        font-size:12px;
+    }
+    
+
     
 }
 @media only screen and (max-width: 375px) {
@@ -855,5 +864,9 @@ float: left;
     .recieve, .send {
         width: 300px;
     } 
+ 
+    .ellip {
+        max-width: 60px;
+    }
     
 }
