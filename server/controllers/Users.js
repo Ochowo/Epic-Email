@@ -26,12 +26,17 @@ class Users {
     } = req.body;
     const saltRounds = 10;
     const encryptedPassword = bcrypt.hashSync(password, saltRounds);
+    const {
+      email,
+      firstName,
+      lastName,
+    } = req.body;
     const user = {
       id: users.length + 1,
-      email: req.body.email,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
       password: encryptedPassword,
+      firstName,
+      lastName,
+      email,
     };
     users.push(user);
     const token = jwt.sign({ email: `${user.email}`, userId: `${user.id}` }, process.env.SECRET, {
@@ -41,15 +46,21 @@ class Users {
       status: 201,
       data: [{
         token,
-        user,
+        firstName,
+        lastName,
+        email,
       }],
     });
   }
 
   static signin(req, res) {
+    const {
+      email,
+      password,
+    } = req.body;
     const newUser = {
-      email: req.body.email,
-      password: req.body.password,
+      email,
+      password,
     };
     const result = users.map(user => user.email);
     if (result.includes(newUser.email) === false) {
@@ -73,7 +84,7 @@ class Users {
       status: 200,
       data: [{
         token,
-        userDb,
+        email,
       }],
     });
   }

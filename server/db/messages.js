@@ -14,7 +14,7 @@ const messages = [
     subject: 'Heello',
     message: 'Nice',
     parentMessageId: '9',
-    status: 'send',
+    status: 'none',
     email: 'ochowoikongbeh@gmail.com',
   },
 ];
