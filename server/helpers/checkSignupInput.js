@@ -21,17 +21,17 @@ const checkSignUpInput = (req, res, next) => {
       status: 400,
       error: 'input fields cannot be empty',
     });
-  } else if (firstName === null || firstName === '' || firstName === undefined) {
+  } else if (firstName === null || firstName === '' || firstName === undefined || firstName.length < 2) {
     res.status(400).json({
       status: 400,
-      error: 'firstname cannot be empty',
+      error: 'firstname cannot be less than 2 characters',
     });
-  } else if (lastName === null || lastName === '' || lastName === undefined) {
+  } else if (lastName === null || lastName === '' || lastName === undefined || lastName.length < 2) {
     res.status(400).json({
       status: 400,
-      error: 'lastname cannot be empty',
+      error: 'lastname cannot be less than 2 characters',
     });
-  } else if (password === null || password === '' || password === undefined || password < 6) {
+  } else if (password === null || password === '' || password === undefined || password.length < 6) {
     res.status(400).json({
       status: 400,
       error: 'password cannot be less than 6 characters',
