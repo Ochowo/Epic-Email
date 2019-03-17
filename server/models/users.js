@@ -18,6 +18,7 @@ password VARCHAR(255) NOT NULL)`;
 // Create users table in the database
 db.query(sqlQuery, (err, res) => {
   if (err) {
+    console.log(err)
     return res.status(500).json({
       status: 500,
       error: {
