@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'test') {
 firstName VARCHAR(255) NOT NULL, lastName VARCHAR(255) NOT NULL,
 password VARCHAR(255) NOT NULL)`;
 }
-// Create users table in the database
+// Create userss table in the database
 db.query(sqlQuery, (err, res) => {
   if (err) {
     console.log(err)
