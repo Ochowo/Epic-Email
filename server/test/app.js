@@ -242,25 +242,6 @@ describe('Epic Mail Test Suite', () => {
     });
   });
 
-  // ====Get all Email==== //
-  describe('GET /messages', () => {
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages?token=wrongtoken')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
-  });
   // ====Get all sent Email==== //
   describe('GET /messages/sent', () => {
     it('should not get sent messages if token is not provided', (done) => {
