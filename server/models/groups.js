@@ -5,7 +5,8 @@ dotenv.config();
 
 let sqlQuery = `CREATE TABLE IF NOT EXISTS groups
 (id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(255) NULL,
-role VARCHAR(255) DEFAULT 'member' NOT NULL)`;
+role VARCHAR(255) DEFAULT 'member' NOT NULL, userId INT NOT NULL,
+FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
 
 if (process.env.NODE_ENV === 'test') {
   sqlQuery = `DROP TABLE IF EXISTS groups CASCADE;
