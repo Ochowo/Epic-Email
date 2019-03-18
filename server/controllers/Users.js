@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import users from '../db/users';
+import db from '../db/index';
+import { checkSigninInput, checkSignupInput } from '../validation/index';
 
 dotenv.config();
 /**
@@ -22,35 +23,46 @@ class Users {
      */
   static signup(req, res) {
     const {
+      email,
+      firstName,
+      lastName,
       password,
     } = req.body;
+    const { errors, isValid } = checkSignupInput(req.body);
+    if (!isValid) {
+      return res.status(400).json({
+        status: 400,
+        error: errors,
+      });
+    }
     const saltRounds = 10;
     const encryptedPassword = bcrypt.hashSync(password, saltRounds);
-    const {
-      email,
-      firstName,
-      lastName,
-    } = req.body;
-    const user = {
-      id: users.length + 1,
-      password: encryptedPassword,
-      firstName,
-      lastName,
-      email,
+    const query = {
+      text: 'INSERT INTO users(email,firstName,lastName,password) VALUES($1,$2,$3,$4) RETURNING *',
+      values: [`${email}`, `${firstName}`, `${lastName}`, `${encryptedPassword}`],
     };
-    users.push(user);
-    const token = jwt.sign({ email: `${user.email}`, userId: `${user.id}` }, process.env.SECRET, {
-      expiresIn: 86400, // expires in 24 hours
+    db.query(query, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          status: 500,
+          error: 'An error occured while trying to sign you up, please try again.',
+        });
+      }
+      const user = result.rows[0];
+      const token = jwt.sign({ email: `${user.email}`, userId: `${user.id}` }, process.env.SECRET, {
+        expiresIn: 86400, // expires in 24 hours
+      });
+      return res.status(201).json({
+        status: 201,
+        data: [{
+          token,
+          email,
+          firstName,
+          lastName,
+        }],
+      });
     });
-    return res.status(201).json({
-      status: 201,
-      data: [{
-        token,
-        firstName,
-        lastName,
-        email,
-      }],
-    });
+    return null;
   }
 
   static signin(req, res) {
@@ -58,35 +70,56 @@ class Users {
       email,
       password,
     } = req.body;
-    const newUser = {
-      email,
-      password,
+    const { errors, isValid } = checkSigninInput(req.body);
+    if (!isValid) {
+      return res.status(400).json({
+        status: 400,
+        error: errors,
+      });
+    }
+    const query = {
+      text: 'SELECT * FROM users WHERE email = $1',
+      values: [`${email}`],
     };
-    const result = users.map(user => user.email);
-    if (result.includes(newUser.email) === false) {
-      return res.status(404).json({
-        status: 404,
-        error: 'Authentication failed. User not found',
+    db.query(query, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          status: 500,
+          error: 'An error occured while trying to sign you in, please try again.',
+        });
+      }
+      if (result.rowCount === 0) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Authentication failed. User not found',
+
+        });
+      }
+      const crypticPassword = result.rows[0].password;
+      const validPassword = bcrypt.compareSync(password, crypticPassword);
+      if (!validPassword) {
+        return res.status(401).json({
+          status: 401,
+          error: 'Authentication failed. Wrong password',
+        });
+      }
+      const user = result.rows[0];
+      const token = jwt.sign({ email: `${email}`, userId: `${user.id}` }, process.env.SECRET, {
+        expiresIn: 86400, // expires in 24 hours
       });
-    }
-    const userDb = users.find(user => user.email === newUser.email);
-    const validPassword = bcrypt.compareSync(newUser.password, userDb.password);
-    if (!validPassword) {
-      return res.status(401).json({
-        status: 401,
-        error: 'Authentication failed. Wrong password',
+      const {
+        firstName,
+      } = result.rows[0];
+      return res.status(200).json({
+        status: 200,
+        data: [{
+          message: `Welcome, ${firstName}`,
+          token,
+          email,
+        }],
       });
-    }
-    const token = jwt.sign({ email: `${newUser.email}`, userId: `${userDb.id}` }, process.env.SECRET, {
-      expiresIn: 86400, // expires in 24 hours
     });
-    return res.status(200).json({
-      status: 200,
-      data: [{
-        token,
-        email,
-      }],
-    });
+    return null;
   }
 }
 export default Users;

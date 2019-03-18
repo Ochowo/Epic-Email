@@ -1,14 +1,26 @@
 {
   "name": "epic-mail",
   "version": "1.0.0",
-  "description": "",
+  "description": "[![Build Status](https://travis-ci.com/Ochowo/Epic-Mail.svg?branch=develop)](https://travis-ci.com/Ochowo/Epic-Mail)\r [![Coverage Status](https://coveralls.io/repos/github/Ochowo/Epic-Mail/badge.svg?branch=develop)](https://coveralls.io/github/Ochowo/Epic-Mail?branch=develop)\r [![Maintainability](https://api.codeclimate.com/v1/badges/740e0250c12e09160ffb/maintainability)](https://codeclimate.com/github/Ochowo/Epic-Mail/maintainability)",
   "main": "index.js",
   "scripts": {
     "start": "npm run build && node dist/index.js",
-    "start:dev": "nodemon server/index.js --exec babel-node",
+    "start:dev": "npm run create-table-users-dev && npm run create-table-messages-dev && npm run create-table-inbox-dev && npm run create-table-sent-dev && npm run create-table-draft-dev && npm run create-table-groups-dev && cross-env NODE_ENV=development nodemon server/index.js --exec babel-node --timeout 600000 --exit",
     "build": "babel server -d dist && babel server --presets env server -d dist",
-    "test": "nyc mocha --require babel-register server/test/**/*.js --timeout 100000 --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "npm run create-table-users-test && npm run create-table-messages-test && npm run create-table-inbox-test && npm run create-table-draft-test && npm run create-table-groups-test && cross-env NODE_ENV=test nyc mocha --require babel-register server/test/**/*.js --timeout 100000 --exit",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "create-table-users-dev": "cross-env NODE_ENV=development babel-node ./server/models/users.js",
+    "create-table-messages-dev": "cross-env NODE_ENV=development babel-node ./server/models/messages.js",
+    "create-table-inbox-dev": "cross-env NODE_ENV=development babel-node ./server/models/inbox.js",
+    "create-table-sent-dev": "cross-env NODE_ENV=development babel-node ./server/models/sent.js",
+    "create-table-draft-dev": "cross-env NODE_ENV=development babel-node ./server/models/draft.js",
+    "create-table-groups-dev": "cross-env NODE_ENV=development babel-node ./server/models/groups.js",
+    "create-table-users-test": "cross-env NODE_ENV=test babel-node ./server/models/users.js",
+    "create-table-messages-test": "cross-env NODE_ENV=test babel-node ./server/models/messages.js",
+    "create-table-inbox-test": "cross-env NODE_ENV=test babel-node ./server/models/inbox.js",
+    "create-table-sent-test": "cross-env NODE_ENV=test babel-node ./server/models/sent.js",
+    "create-table-draft-test": "cross-env NODE_ENV=development babel-node ./server/models/draft.js",
+    "create-table-groups-test": "cross-env NODE_ENV=test babel-node ./server/models/groups.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +33,9 @@
   },
   "homepage": "https://github.com/Ochowo/Epic-Mail#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "coveralls": "^3.0.3",
+    "cross-env": "^5.2.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
@@ -29,8 +43,6 @@
     "nyc": "^13.3.0"
   },
   "dependencies": {
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
@@ -38,7 +50,9 @@
     "chai-http": "^4.2.1",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "express-validator": "^5.3.1",
     "jsonwebtoken": "^8.5.0",
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "pg": "^7.9.0"
   }
 }

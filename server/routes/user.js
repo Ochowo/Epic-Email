@@ -1,13 +1,11 @@
 import express from 'express';
 import { users } from '../controllers/index';
-import {
-  validEmail, userExists, checkSignupInput, checkSigninInput,
-} from '../helpers/index';
+import { userExists } from '../helpers';
 
 const router = express.Router();
 
-router.post('/signup', checkSignupInput, validEmail, userExists, users.signup);
-router.post('/login', checkSigninInput, validEmail, users.signin);
+router.post('/signup', userExists, users.signup);
+router.post('/login', users.signin);
 
 
 export default router;
