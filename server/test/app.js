@@ -241,11 +241,13 @@ describe('Epic Mail Test Suite', () => {
         });
     });
   });
-  // ====Get a specific Email==== //
-  describe('GET /messages/<message-id>', () => {
-    it('should not fetch a specific message if token is not provided', (done) => {
+
+
+  // ====Get all unread Email==== //
+  describe('GET /messages/unread', () => {
+    it('should not get messages if token is not provided', (done) => {
       chai.request(app)
-        .get('/api/v1/messages/1')
+        .get('/api/v1/messages/unread')
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(401);
@@ -259,6 +261,9 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
+  });
+  // ====Get a specific Email==== //
+  describe('GET /messages/<message-id>', () => {
     it('should not fetch a specific message if token is wrong', (done) => {
       chai.request(app)
         .get('/api/v1/messages/1?token=wrongtoken')
