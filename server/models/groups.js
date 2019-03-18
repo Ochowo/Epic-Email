@@ -4,12 +4,14 @@ import db from '../db/index';
 dotenv.config();
 
 let sqlQuery = `CREATE TABLE IF NOT EXISTS groups
-(id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(255) NOT NULL)`;
+(id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(255) NULL,
+role VARCHAR(255) DEFAULT 'member' NOT NULL)`;
 
 if (process.env.NODE_ENV === 'test') {
-  sqlQuery = `DROP TABLE IF EXISTS ggroups CASCADE;
+  sqlQuery = `DROP TABLE IF EXISTS groups CASCADE;
   CREATE TABLE IF NOT EXISTS groups
-    (id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(255)NOT NULL)`;
+    (id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(255) NULL,
+    role VARCHAR(255) DEFAULT 'member' NOT NULL)`;
 }
 // Create group table in the database
 db.query(sqlQuery, (err, res) => {

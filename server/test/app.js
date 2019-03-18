@@ -11,9 +11,18 @@ chai.should();
 const token = jwt.sign({ email: 'ochowo@gmail.com', userId: 1 }, process.env.SECRET, {
   expiresIn: 86400,
 });
+// Decode token
+
 const newUser = {
   id: 1,
   email: 'ochowo@gmail.com',
+  firstName: 'Ochowo',
+  lastName: 'Ikongbeh',
+  password: 'password',
+};
+const newUser2 = {
+  id: 2,
+  email: 'ochowoo@gmail.com',
   firstName: 'Ochowo',
   lastName: 'Ikongbeh',
   password: 'password',
@@ -47,10 +56,14 @@ const newMessage = {
   subject: 'Heello',
   message: 'Nice',
   parentMessageId: 2,
-  receiverEmail: 'ochowo@gmail.com',
+  receiverEmail: 'ochowoo@gmail.com',
   senderId: 1,
-  receiverId: 1,
+  receiverId: 2,
   status: 'unread',
+};
+const newGroup = {
+  id: 1,
+  name: 'Funky',
 };
 describe('Epic Mail Test Suite', () => {
   describe('POST auth/signup - register a new user', () => {
@@ -74,6 +87,22 @@ describe('Epic Mail Test Suite', () => {
       chai.request(app)
         .post('/api/v1/auth/signup')
         .send(newUser)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(201);
+          res.body.status.should.equal(201);
+          res.body.should.have.property('data');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
+    it('should register a new user', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signup')
+        .send(newUser2)
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(201);
