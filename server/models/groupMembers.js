@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'test') {
   FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
   FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
 }
-// Create groupMember table in the database
+// Create groupMember tablen in the database
 db.query(sqlQuery, (err, res) => {
   if (err) {
     console.log(err);
