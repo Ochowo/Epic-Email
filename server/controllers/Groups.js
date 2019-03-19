@@ -225,7 +225,7 @@ class Groups {
         };
         db.query(userQuery, (memberErr, memberRes) => {
           if (memberErr) {
-            console.log(memberErr);
+            console.log(memberRes);
             return res.status(500).json({
               status: 500,
               error: 'An error occured while creating this user please try again.',
@@ -237,49 +237,6 @@ class Groups {
               details: memberRes.rows,
             }],
           });
-        });
-      });
-    });
-  }
-
-  static deleteUser(req, res) {
-    // Check header or url parameters or post parameters for token
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
-    // Decode token
-    const decoded = jwt.verify(token, process.env.SECRET);
-    const {
-      id,
-      userId,
-    } = req.params;
-
-    const dquery = {
-      text: `SELECT * FROM groups WHERE UserId = ${decoded.userId} AND id = ${id}`,
-    };
-
-    db.query(dquery, (dellError, dResult) => {
-      if (dellError) {
-        console.log(dellError);
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to delete the user please try again.',
-        });
-      }
-      const gId = dResult.rows[0].id;
-      const query = {
-        text: `DELETE FROM groupMembers WHERE id = ${gId} AND userId = ${userId}`,
-      };
-
-      db.query(query, (delError, delRes) => {
-        if (delError) {
-          console.log(delError);
-          return res.status(500).json({
-            status: 500,
-            error: 'An error occured while trying to delete the user please try again.',
-          });
-        }
-        return res.status(200).json({
-          status: 200,
-          data: `User  with id => ${id}, deleted the group from successfully.`,
         });
       });
     });
