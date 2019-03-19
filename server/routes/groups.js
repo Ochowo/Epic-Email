@@ -10,5 +10,6 @@ router.patch('/:id/name', isLoggedIn, groups.updateGroup);
 router.delete('/:id', isLoggedIn, groups.deleteGroup);
 router.post('/:id/users', isLoggedIn, validEmail, groups.createUser);
 router.delete('/:id/users/:userId', isLoggedIn, validEmail, groups.deleteUser);
+router.post('/:id/messages', isLoggedIn, groups.newMessage);
 
 export default router;

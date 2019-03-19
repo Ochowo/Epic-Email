@@ -3,6 +3,11 @@ node_js:
   - 10.13.0
 services:
 - postgresql
+env:
+- DATABASE_DEVELOPMENT=postgres://brzcalsx:33ZPKNcjI8Euc65nExvd1KFOBM5qISiU@isilo.db.elephantsql.com:5432/brzcalsx
+- DATABASE_TEST=postgres://smdmojjx:MhvePqeu1YDqBOtORLVzeaGaF1cKTEI4@isilo.db.elephantsql.com:5432/smdmojjx
+- DATABASE_PRODUCTION=postgres://svxyujwb:eJrMQnkC56bq7wxNwPrOwGT3JP4qo163@isilo.db.elephantsql.com:5432/svxyujwb
+- SECRET = 4567yul667
 before_script: npm test
 after_success: npm run coverage
 install: npm install
