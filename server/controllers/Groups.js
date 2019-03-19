@@ -173,5 +173,73 @@ class Groups {
       });
     });
   }
+
+  static createUser(req, res) {
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const {
+      id,
+    } = req.params;
+    const {
+      email,
+    } = req.body;
+    const query = {
+      text: `SELECT id FROM groups WHERE userId = ${decoded.userId} AND id = ${id}`,
+    };
+    db.query(query, (newesterr, newestResult) => {
+      if (newesterr) {
+        return res.status(500).json({
+          status: 500,
+          error: {
+            message: 'An error occured while trying to get the user, please try again.',
+          },
+        });
+      }
+      const newQuery = {
+        text: 'SELECT * FROM users WHERE email = $1',
+        values: [`${email}`],
+      };
+      db.query(newQuery, (newesterror, newesttRes) => {
+        if (newesterror) {
+          return res.status(500).json({
+            status: 500,
+            error: {
+              message: 'An error occured while trying to get the group, please try again.',
+            },
+          });
+        }
+        if (newesttRes.rowCount < 1) {
+          // No such order
+          return res.status(404).json({
+            status: 404,
+            error: 'Sorry, user not found',
+          });
+        }
+        const groupId = newestResult.rows[0].id;
+        const memberId = newesttRes.rows[0].id;
+        const userQuery = {
+          text: 'INSERT INTO groupMembers(id,userId) VALUES($1,$2) RETURNING *',
+          values: [`${groupId}`, `${memberId}`],
+        };
+        db.query(userQuery, (memberErr, memberRes) => {
+          if (memberErr) {
+            console.log(memberRes);
+            return res.status(500).json({
+              status: 500,
+              error: 'An error occured while creating this user please try again.',
+            });
+          }
+          return res.status(200).json({
+            status: 200,
+            data: [{
+              details: memberRes.rows,
+            }],
+          });
+        });
+      });
+    });
+  }
 }
 export default Groups;
