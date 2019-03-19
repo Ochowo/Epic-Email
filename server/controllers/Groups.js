@@ -139,5 +139,39 @@ class Groups {
     });
     return null;
   }
+
+  static deleteGroup(req, res) {
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const {
+      id,
+    } = req.params;
+
+    const query = {
+      text: `DELETE FROM groups WHERE id = ${id} AND userId = ${decoded.userId}`,
+    };
+
+    db.query(query, (errorrs, newestRes) => {
+      if (errorrs) {
+        return res.status(500).json({
+          status: 500,
+          error: 'An error occured while trying to delete the group please try again.',
+        });
+      }
+      if (newestRes.rowCount < 1) {
+        // No such order
+        return res.status(404).json({
+          status: 404,
+          error: 'Sorry, requested group not found for this user',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        data: `Group  with id => ${id}, deleted successfully.`,
+      });
+    });
+  }
 }
 export default Groups;
