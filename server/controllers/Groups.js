@@ -77,5 +77,67 @@ class Groups {
       });
     });
   }
+
+  static updateGroup(req, res) {
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const Id = decoded.userId;
+    const reqId = req.params.id;
+    const {
+      name,
+    } = req.body;
+    const { errors, isValid } = nameValidator(req.body);
+    if (!isValid) {
+      return res.status(400).json({
+        status: 400,
+        error: errors,
+      });
+    }
+    const query = {
+      text: 'UPDATE groups SET name = $1 WHERE id = $2',
+      values: [`${name}`, `${reqId}`],
+    };
+
+    db.query(query, (errr, Ress) => {
+      if (errr) {
+        return res.status(500).json({
+          status: 500,
+          error: 'An error occured while trying to update the name of the group, please try again.',
+        });
+      }
+      if (Ress.rowCount < 1) {
+        // No such order
+        return res.status(404).json({
+          status: 404,
+          error: 'Sorry, group not found',
+        });
+      }
+      const newQuery = {
+        text: `SELECT * FROM groups WHERE id = $1
+        AND userId =$2`,
+        values: [`${reqId}`, `${Id}`],
+      };
+      db.query(newQuery, (er, newRes) => {
+        if (er) {
+          return res.status(500).json({
+            status: 500,
+            error: {
+              message: 'An error occured while trying to get the group, please try again.',
+            },
+          });
+        }
+        return res.status(200).json({
+          status: 200,
+          data: [{
+            details: newRes.rows,
+          }],
+        });
+      });
+      return null;
+    });
+    return null;
+  }
 }
 export default Groups;
