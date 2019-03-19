@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import db from '../db/index';
 import nameValidator from '../validation/nameValidator';
-import  grpValidator  from '../validation/grpValidator';
 
 dotenv.config();
 
@@ -54,8 +53,8 @@ class Groups {
     const query = {
       text: `SELECT * FROM groups WHERE userId = ${decoded.userId}`,
     };
-    db.query(query, (eerr, newResult) => {
-      if (eerr) {
+    db.query(query, (err, newResult) => {
+      if (err) {
         return res.status(500).json({
           status: 500,
           error: {
@@ -284,66 +283,6 @@ class Groups {
         });
       });
     });
-  }
-
-  static newMessage(req, res) {
-    // Check header or url parameters or post parameters for token
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
-    // Decode token
-    const decoded = jwt.verify(token, process.env.SECRET);
-    const senderId = decoded.userId;
-
-    const {
-      subject,
-      message,
-      parentMessageId,
-    } = req.body;
-    const reqId = req.params.id;
-    const { errors, Valid } = grpValidator(req.body);
-    if (!Valid) {
-      return res.status(400).json({
-        status: 400,
-        error: errors,
-      });
-    }
-    const querytxt = {
-      text: `SELECT * FROM groups WHERE UserId = ${decoded.userId} AND id = ${reqId}`,
-    };
-    db.query(querytxt, (ertr, result) => {
-      if (ertr) {
-        console.log(ertr);
-        return res.status(500).json({
-          status: 500,
-          error: {
-            message: 'An error occured while trying to send the message, please try again.',
-          },
-        });
-      }
-      const receiverId = result.rows[0].id;
-      const query = {
-        text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
-        values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
-      };
-      db.query(query, (error2, dbresult) => {
-        if (error2) {
-          console.log(error2);
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to send the message, please try again.',
-            },
-          });
-        }
-        return res.status(201).json({
-          status: 201,
-          data: [{
-            details: dbresult.rows[0],
-          }],
-        });
-      });
-      return null;
-    });
-    return null;
   }
 }
 export default Groups;

@@ -3,7 +3,6 @@ node_js:
   - 10.13.0
 services:
 - postgresql
-env:
-- SECRET = 4567yul667
 before_script: npm test
 after_success: npm run coverage
+install: npm install
