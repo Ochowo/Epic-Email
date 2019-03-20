@@ -21,19 +21,5 @@ const msgQuery = async () => {
     .catch((err) => {
       console.log(err);
     });
-  // , (err, res) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).json({
-  //       status: 500,
-  //       error: {
-  //         message: 'An error occured while trying to create the message table, please try again',
-  //       },
-  //     });
-  //   }
-  //   // sent table created
-  //   console.log('Connection successful, messages table created');
-  //   // return true;
-  // });
 };
 export default msgQuery;
