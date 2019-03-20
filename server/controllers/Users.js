@@ -58,8 +58,9 @@ class Users {
           userToken: token,
           email,
           firstName,
-          lastName,
+          lastName, 
         }],
+     
       });
     });
     return null;
@@ -105,18 +106,50 @@ class Users {
       }
       const user = result.rows[0];
       const token = jwt.sign({ email: `${email}`, userId: `${user.id}` }, process.env.SECRET, {
-        expiresIn: 86400,
+        expiresIn: 86400, // expires in 24 hours
       });
       const {
         firstName,
-        lastName,
       } = result.rows[0];
       return res.status(200).json({
         status: 200,
         data: [{
-          message: `Welcome, ${firstName} ${lastName}`,
+          message: `Welcome, ${firstName}`,
           token,
           email,
+        }],
+      });
+    });
+    return null;
+  }
+
+  static contacts(req, res) {
+    const {
+      email,
+      firstName,
+      lastName,
+    } = req.body;
+    // Check header or url parameters or post parameters for token
+    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const ownerId = decoded.userId;
+    const query = {
+      text: 'INSERT INTO contacts(email,firstName,lastName,ownerId) VALUES($1,$2,$3,$4) RETURNING *',
+      values: [`${email}`, `${firstName}`, `${lastName}`, `${ownerId}`],
+    };
+    db.query(query, (newError, newResult) => {
+      if (newError) {
+        console.log(newError)
+        return res.status(500).json({
+          status: 500,
+          error: 'An error occured while trying to sign you up, please try again.',
+        });
+      }
+      return res.status(201).json({
+        status: 201,
+        data: [{
+          contact: newResult.rows,
         }],
       });
     });

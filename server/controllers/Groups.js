@@ -2,13 +2,15 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import db from '../db/index';
 import nameValidator from '../validation/nameValidator';
-import grpValidator from '../validation/grpValidator';
+import  grpValidator  from '../validation/grpValidator';
 
 dotenv.config();
 
 class Groups {
   static newGroup(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       name,
@@ -45,7 +47,9 @@ class Groups {
   }
 
   static getGroups(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT * FROM groups WHERE userId = ${decoded.userId}`,
@@ -60,6 +64,7 @@ class Groups {
         });
       }
       if (newResult.rowCount < 1) {
+        // No such order
         return res.status(404).json({
           status: 404,
           error: 'Sorry, no group found for this user',
@@ -92,8 +97,8 @@ class Groups {
       });
     }
     const query = {
-      text: 'UPDATE groups SET name = $1 WHERE id = $2 AND userId =$3',
-      values: [`${name}`, `${reqId}`, `${Id}`],
+      text: 'UPDATE groups SET name = $1 WHERE id = $2',
+      values: [`${name}`, `${reqId}`],
     };
 
     db.query(query, (errr, Ress) => {
@@ -104,9 +109,10 @@ class Groups {
         });
       }
       if (Ress.rowCount < 1) {
+        // No such order
         return res.status(404).json({
           status: 404,
-          error: `The Group ${name} does not exist for this user`,
+          error: 'Sorry, group not found',
         });
       }
       const newQuery = {
@@ -136,7 +142,9 @@ class Groups {
   }
 
   static deleteGroup(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
@@ -154,6 +162,7 @@ class Groups {
         });
       }
       if (newestRes.rowCount < 1) {
+        // No such order
         return res.status(404).json({
           status: 404,
           error: 'Sorry, requested group not found for this user',
@@ -161,13 +170,15 @@ class Groups {
       }
       return res.status(200).json({
         status: 200,
-        data: 'Group deleted successfully.',
+        data: `Group  with id => ${id}, deleted successfully.`,
       });
     });
   }
 
   static createUser(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
@@ -228,14 +239,14 @@ class Groups {
             }],
           });
         });
-        return null;
       });
-      return null;
     });
   }
 
   static deleteUser(req, res) {
+    // Check header or url parameters or post parameter for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
@@ -259,8 +270,9 @@ class Groups {
         text: `DELETE FROM groupMembers WHERE id = ${gId} AND userId = ${userId}`,
       };
 
-      db.query(query, (delError) => {
+      db.query(query, (delError, delRes) => {
         if (delError) {
+          console.log(delError);
           return res.status(500).json({
             status: 500,
             error: 'An error occured while trying to delete the user please try again.',
@@ -271,12 +283,13 @@ class Groups {
           data: `User  with id => ${id}, deleted the group from successfully.`,
         });
       });
-      return null;
     });
   }
 
   static newMessage(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const senderId = decoded.userId;
 
@@ -298,6 +311,7 @@ class Groups {
     };
     db.query(querytxt, (ertr, result) => {
       if (ertr) {
+        console.log(ertr);
         return res.status(500).json({
           status: 500,
           error: {
@@ -312,6 +326,7 @@ class Groups {
       };
       db.query(query, (error2, dbresult) => {
         if (error2) {
+          console.log(error2);
           return res.status(500).json({
             status: 500,
             error: {

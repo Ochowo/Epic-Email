@@ -3,28 +3,32 @@ import db from '../db/index';
 
 dotenv.config();
 
-const grpMemberQuery = async () => {
-  let sqlQuery = `CREATE TABLE IF NOT EXISTS groupMembers
+let sqlQuery = `CREATE TABLE IF NOT EXISTS groupMembers
 (id INT NOT NULL PRIMARY KEY,
 userId INT NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL,
 FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
 FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
 
-  if (process.env.NODE_ENV === 'test') {
-    sqlQuery = `DROP TABLE IF EXISTS groupMembers CASCADE;
+if (process.env.NODE_ENV === 'test') {
+  sqlQuery = `DROP TABLE IF EXISTS groups CASCADE;
   CREATE TABLE IF NOT EXISTS groupMembers
-  (id INT NOT NULL PRIMARY KEY, 
-    userId INT NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL,
-    FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
-    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
-  }
-  // Create groupMember tablen in the database
-  await db.query(sqlQuery)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
+  (groupId NOT NULL PRIMARY KEY, memberId INT NOT NULL
+  email VARCHAR(255) NOT NULL UNIQUE, role VARCHAR(255) DEFAULT 'member' NOT NULL
+  FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
+  FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
+}
+// Create groupMember tablen in the database
+db.query(sqlQuery, (err, res) => {
+  if (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: 500,
+      error: {
+        message: 'An error occured while trying to create the groupMember table, please try again',
+      },
     });
-};
-export default grpMemberQuery;
+  }
+  // sent table created
+  console.log('Connection successful, groupMember table created');
+  return true;
+});

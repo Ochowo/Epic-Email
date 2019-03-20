@@ -1,24 +1,27 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import dotenv from 'dotenv';
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import app from '../index';
 
 dotenv.config();
 chai.use(chaiHttp);
 chai.should();
 
-let userToken;
-const wrongToken = 'ddnkcjvkdc';
+const token = jwt.sign({ email: 'ochowo@gmail.com', userId: 1 }, process.env.SECRET, {
+  expiresIn: 86400,
+});
 // Decode token
 
 const newUser = {
+  id: 1,
   email: 'ochowo@gmail.com',
   firstName: 'Ochowo',
   lastName: 'Ikongbeh',
   password: 'password',
 };
 const newUser2 = {
+  id: 2,
   email: 'ochowoo@gmail.com',
   firstName: 'Ochowo',
   lastName: 'Ikongbeh',
@@ -49,10 +52,11 @@ const invalidLogin = {
   password: 'tgf',
 };
 const newMessage = {
+  id: 1,
   subject: 'Heello',
   message: 'Nice',
   parentMessageId: 2,
-  receiverEmail: 'ochowo@gmail.com',
+  receiverEmail: 'ochowoo@gmail.com',
   senderId: 1,
   receiverId: 2,
   status: 'unread',
@@ -124,6 +128,7 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
+          res.body.error.should.equal('the email ochowo@gmail.com is already in use, please choose another.');
           done();
         });
     });
@@ -202,7 +207,6 @@ describe('Epic Mail Test Suite', () => {
         .send(loginDetails)
         .end((err, res) => {
           if (err) throw err;
-          userToken = res.body.data[0].token;
           res.status.should.equal(200);
           res.body.status.should.equal(200);
           res.body.should.have.property('data');
@@ -219,9 +223,8 @@ describe('Epic Mail Test Suite', () => {
   describe('POST/messages', () => {
     it('should create a message', (done) => {
       chai.request(app)
-        .post('/api/v1/messages')
+        .post(`/api/v1/messages?&token=${token}`)
         .send(newMessage)
-        .set('x-access-token', userToken)
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(201);
@@ -250,188 +253,9 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-  });
-  // ====Get all Email==== //
-  describe('GET /messages', () => {
-    it('should return a list of all received messages', (done) => {
+    it('should not create message if token is wrong', (done) => {
       chai.request(app)
-        .get('/api/v1/messages')
-        .set('x-access-token', userToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(200);
-          res.body.status.should.equal(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('status');
-          res.body.should.have.property('data');
-          res.body.status.should.be.a('number');
-          res.body.data.should.be.a('array');
-          done();
-        });
-    });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages')
-        .set('x-access-token', wrongToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
-  });
-  // ====Get all sent Email==== //
-  describe('GET /messages/sent', () => {
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/sent')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/sent')
-        .set('x-access-token', wrongToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
-  });
-  describe('GET /messages/unread', () => {
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/unread')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/unread')
-        .set('x-access-token', wrongToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
-  });
-  // ====Get a specific Email==== //
-  describe('GET /messages/<message-id>', () => {
-    it('should not fetch a specific message if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/:id')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not fetch a specific message if token is wrong', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages/:id')
-        .set('x-access-token', wrongToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
-          done();
-        });
-    });
-  });
-  // ==== Delete a specific Email==== //
-  describe('GET /messages/<message-id>', () => {
-    it('should not delete a specific message if token is not provided', (done) => {
-      chai.request(app)
-        .delete('/api/v1/messages/:id')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
-          done();
-        });
-    });
-    it('should not delete a specific message if token is wrong', (done) => {
-      chai.request(app)
-        .delete('/api/v1/messages/:id')
-        .set('x-access-token', wrongToken)
+        .post('/api/v1/messages?token=wrongtoken')
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(401);

@@ -21,7 +21,9 @@ class Messages {
    * @memberOf Messages
    */
   static newMessage(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const senderId = decoded.userId;
 
@@ -49,12 +51,6 @@ class Messages {
           error: {
             message: 'An error occured while trying to send the message, please try again.',
           },
-        });
-      }
-      if (result.rowCount < 1) {
-        return res.status(404).json({
-          status: 404,
-          error: 'Sorry, the receiver email does not exist in the database',
         });
       }
       const receiverId = result.rows[0].id;
@@ -173,7 +169,9 @@ class Messages {
  * @memberOf Messages
  */
   static getAllMessages(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
@@ -192,6 +190,7 @@ class Messages {
         });
       }
       if (result.rowCount < 1) {
+        // No such order
         return res.status(404).json({
           status: 404,
           error: 'Sorry, no message found this user',
@@ -253,7 +252,9 @@ class Messages {
   }
 
   static getSent(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT sent.messageId, messages.createdOn, messages.subject,
@@ -288,6 +289,7 @@ class Messages {
   }
 
   static getSpecificMessage(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
@@ -345,7 +347,9 @@ class Messages {
   }
 
   static deleteSpecificMessage(req, res) {
+    // Check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
