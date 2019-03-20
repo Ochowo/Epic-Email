@@ -6,4 +6,5 @@ services:
 env:
 - SECRET = 4567yul667
 before_script: npm test
+bundler_args: --retry 5
 after_success: npm run coverage
