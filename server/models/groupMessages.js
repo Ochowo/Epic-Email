@@ -24,20 +24,5 @@ const grpMsgQuery = async () => {
     .catch((err) => {
       console.log(err);
     });
-  // , (err, res) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).json({
-  //       status: 500,
-  //       error: {
-  //         message: 'An error occured while trying to create the groupMessages table,
-  // please try again',
-  //       },
-  //     });
-  //   }
-  //   // sent table created
-  //   console.log('Connection successful, groupMessages table created');
-  //   // return true;
-  // });
 };
 export default grpMsgQuery;
