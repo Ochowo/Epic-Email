@@ -5,7 +5,7 @@ dotenv.config();
 
 // database connectionstring
 let connectionString;
-
+console.log(process.env.NODE_ENV)
 // Get environment
 if (process.env.NODE_ENV === 'test') {
   connectionString = process.env.DATABASE_TEST;

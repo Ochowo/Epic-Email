@@ -10,7 +10,6 @@ const userExists = (req, res, next) => {
   };
   db.query(query, (err, result) => {
     if (err) {
-      console.log(err);
       res.status(409).json({
         status: 409,
         error: `The email ${email} already exists`,
@@ -19,7 +18,7 @@ const userExists = (req, res, next) => {
     if (result.rowCount > 0) {
       return res.status(409).json({
         status: 409,
-        error: `the email ${email} is already in use, please choose another.`,
+        error: `the email ${email} is already in use`,
       });
     }
     return next();
