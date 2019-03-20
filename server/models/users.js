@@ -23,19 +23,6 @@ password VARCHAR(255) NOT NULL)`;
     .catch((err) => {
       console.log(err);
     });
-  // , (err, res) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).json({
-  //       status: 500,
-  //       error: {
-  //         message: 'An error occured while trying to create the users table, please try again',
-  //       },
-  //     });
-  //   }
-  //   // users table created
-  //   console.log('Connection successful, user table created');
-  //  // return true;
-  // });
+  
 };
 export default userQuery;
