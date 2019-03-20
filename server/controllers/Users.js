@@ -55,11 +55,12 @@ class Users {
       return res.status(201).json({
         status: 201,
         data: [{
-          token,
+          userToken: token,
           email,
           firstName,
-          lastName,
+          lastName, 
         }],
+     
       });
     });
     return null;
