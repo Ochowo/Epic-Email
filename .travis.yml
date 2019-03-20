@@ -6,5 +6,5 @@ services:
 - postgresql
 env:
 - SECRET = 4567yul667
-before_script: travis_wait npm run custom test
+before_script: travis_wait npm run custom-test
 after_success: npm run coverage
