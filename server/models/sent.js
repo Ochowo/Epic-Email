@@ -23,20 +23,7 @@ const sentQuery = async () => {
     .catch((err) => {
       console.log(err);
     });
-//   , (err, res) => {
-//     if (err) {
-//       console.log(err);
-//       return res.status(500).json({
-//         status: 500,
-//         error: {
-//           message: 'An error occured while trying to create the sent table, please try again',
-//         },
-//       });
-//     }
-//     // sent table created
-//     console.log('Connection successful, sent table created');
-//     // return true;
-//   });
+
 };
 
 export default sentQuery;
