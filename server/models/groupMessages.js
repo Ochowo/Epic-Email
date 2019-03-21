@@ -6,7 +6,7 @@ dotenv.config();
 const grpMsgQuery = async () => {
   let sqlQuery = `CREATE TABLE IF NOT EXISTS groupMessages
     (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,
-    message VARCHAR(255) NOT NULL, parentMessageId INT NULL, status VARCHAR(255) DEFAULT 'unread' NOT NULL,
+    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT 'unread' NOT NULL,
     senderId INT NOT NULL, groupId INT NOT NULL,
    FOREIGN KEY(groupId) REFERENCES groups(id) ON DELETE CASCADE)`;
 
@@ -14,7 +14,7 @@ const grpMsgQuery = async () => {
     sqlQuery = `DROP TABLE IF EXISTS messages CASCADE;
   CREATE TABLE IF NOT EXISTS messages
     (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,
-    message VARCHAR(255) NOT NULL, parentMessageId INT NULL, status VARCHAR(255) DEFAULT 'unread' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL)`;
+    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT 'unread' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL)`;
   }
   // Create groupMessage table in the database
   await db.query(sqlQuery)

@@ -176,7 +176,7 @@ class Groups {
       email,
     } = req.body;
     const query = {
-      text: `SELECT id FROM groups WHERE userId = ${decoded.userId} AND id = ${id}`,
+      text: `SELECT * FROM groups WHERE userId = ${decoded.userId} AND id = ${id}`,
     };
     db.query(query, (newesterr, newestResult) => {
       if (newesterr) {
@@ -187,6 +187,7 @@ class Groups {
           },
         });
       }
+      const gres = newestResult.rows[0].id;
       const newQuery = {
         text: 'SELECT * FROM users WHERE email = $1',
         values: [`${email}`],
@@ -200,18 +201,10 @@ class Groups {
             },
           });
         }
-        if (newesttRes.rowCount < 1) {
-          // No such order
-          return res.status(404).json({
-            status: 404,
-            error: 'Sorry, user not found',
-          });
-        }
-        const groupId = newestResult.rows[0].id;
         const memberId = newesttRes.rows[0].id;
         const userQuery = {
-          text: 'INSERT INTO groupMembers(id,userId) VALUES($1,$2) RETURNING *',
-          values: [`${groupId}`, `${memberId}`],
+          text: 'INSERT INTO groupMembers(id,userId,email) VALUES($1,$2,$3) RETURNING *',
+          values: [`${gres}`, `${memberId}`, `${email}`],
         };
         db.query(userQuery, (memberErr, memberRes) => {
           if (memberErr) {
@@ -224,7 +217,7 @@ class Groups {
           return res.status(200).json({
             status: 200,
             data: [{
-              details: memberRes.rows,
+              details: memberRes.rows[0],
             }],
           });
         });
@@ -239,7 +232,6 @@ class Groups {
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
-      userId,
     } = req.params;
 
     const dquery = {
@@ -254,9 +246,10 @@ class Groups {
           error: 'An error occured while trying to delete the user please try again.',
         });
       }
+      const pId = dResult.rows[0].name;
       const gId = dResult.rows[0].id;
       const query = {
-        text: `DELETE FROM groupMembers WHERE id = ${gId} AND userId = ${userId}`,
+        text: `DELETE FROM groupMembers WHERE id=${gId} AND userId=${decoded.userId}`,
       };
 
       db.query(query, (delError) => {
@@ -268,7 +261,7 @@ class Groups {
         }
         return res.status(200).json({
           status: 200,
-          data: `User  with id => ${id}, deleted the group from successfully.`,
+          data: `User  with id => ${id}, deleted from the group ${pId} successfully.`,
         });
       });
       return null;
@@ -298,6 +291,7 @@ class Groups {
     };
     db.query(querytxt, (ertr, result) => {
       if (ertr) {
+        console.log(ertr)
         return res.status(500).json({
           status: 500,
           error: {
@@ -312,6 +306,7 @@ class Groups {
       };
       db.query(query, (error2, dbresult) => {
         if (error2) {
+          console.log(error2)
           return res.status(500).json({
             status: 500,
             error: {
@@ -326,9 +321,7 @@ class Groups {
           }],
         });
       });
-      return null;
     });
-    return null;
   }
 }
 export default Groups;

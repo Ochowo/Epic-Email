@@ -43,6 +43,7 @@ class Users {
     };
     db.query(query, (err, result) => {
       if (err) {
+        console.log(err);
         return res.status(500).json({
           status: 500,
           error: 'An error occured while trying to sign you up, please try again.',

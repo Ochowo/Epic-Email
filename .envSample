@@ -1,0 +1,4 @@
+DATABASE_DEVELOPMENT='your development database URL'
+DATABASE_TEST='your test database URL'
+DATABASE_PRODUCTION='your production database URL'
+SECRET = 'jwt secret'
