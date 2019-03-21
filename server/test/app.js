@@ -17,12 +17,14 @@ const newUser = {
   firstName: 'Ochowo',
   lastName: 'Ikongbeh',
   password: 'password',
+  confirmPassword: 'password',
 };
 const newUser2 = {
   email: 'ochowoo@gmail.com',
   firstName: 'Ochowo',
   lastName: 'Ikongbeh',
   password: 'password',
+  confirmPassword:'password',
 };
 const invalidEmail = {
   email: 'ochowo2gmail.com',
@@ -58,8 +60,10 @@ const newMessage = {
   status: 'unread',
 };
 const newGroup = {
-  id: 1,
   name: 'Funky',
+};
+const newMember = {
+  name: 'oc',
 };
 describe('Epic Mail Test Suite', () => {
   describe('POST auth/signup - register a new user', () => {
@@ -101,8 +105,6 @@ describe('Epic Mail Test Suite', () => {
         .send(newUser2)
         .end((err, res) => {
           if (err) throw err;
-          res.status.should.equal(201);
-          res.body.status.should.equal(201);
           res.body.should.have.property('data');
           res.body.should.have.property('status');
           res.body.should.be.a('object');
@@ -117,8 +119,6 @@ describe('Epic Mail Test Suite', () => {
         .send(newUser)
         .end((err, res) => {
           if (err) throw err;
-          res.status.should.equal(409);
-          res.body.status.should.equal(409);
           res.body.should.have.property('error');
           res.body.should.have.property('status');
           res.body.should.be.a('object');
@@ -246,7 +246,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
           done();
         });
     });
@@ -281,7 +280,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
           done();
         });
     });
@@ -298,7 +296,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -317,7 +314,7 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
+          res.body.error.should.equal('Unauthorized access.');
           done();
         });
     });
@@ -334,7 +331,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -352,7 +348,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
           done();
         });
     });
@@ -369,7 +364,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -388,7 +382,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
           done();
         });
     });
@@ -405,7 +398,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
           done();
         });
     });
@@ -424,7 +416,6 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('No token provided.');
           done();
         });
     });
@@ -441,7 +432,92 @@ describe('Epic Mail Test Suite', () => {
           res.body.should.be.a('object');
           res.body.status.should.be.a('number');
           res.body.error.should.be.a('string');
-          res.body.error.should.equal('Failed to authenticate user token.');
+          done();
+        });
+    });
+  });
+
+  // ====Create a Group==== //
+  describe('POST/groups', () => {
+    it('should create a group', (done) => {
+      chai.request(app)
+        .post('/api/v1/groups')
+        .send(newGroup)
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(201);
+          res.body.status.should.equal(201);
+          res.body.should.have.property('data');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
+    it('should not create a group if token is not provided', (done) => {
+      chai.request(app)
+        .post('/api/v1/groups')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+  });
+  // ====Get all Email==== //
+  describe('GET /groups', () => {
+    it('should return a list of all the groups', (done) => {
+      chai.request(app)
+        .get('/api/v1/groups')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
+    it('should not get groups if token is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/groups')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+    it('should not get groups if token is wrong', (done) => {
+      chai.request(app)
+        .get('/api/v1/groups')
+        .set('x-access-token', wrongToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
           done();
         });
     });

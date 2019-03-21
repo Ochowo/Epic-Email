@@ -28,7 +28,6 @@ class Messages {
     const {
       subject,
       message,
-      parentMessageId,
       receiverEmail,
     } = req.body;
     const { errors, isValid } = messageValidator(req.body);
@@ -59,11 +58,12 @@ class Messages {
       }
       const receiverId = result.rows[0].id;
       const query = {
-        text: 'INSERT INTO messages(subject,message,parentMessageId, senderId, receiverId) VALUES($1,$2,$3,$4,$5) RETURNING *',
-        values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
+        text: 'INSERT INTO messages(subject,message,senderId, receiverId) VALUES($1,$2,$3,$4) RETURNING *',
+        values: [`${subject}`, `${message}`, `${senderId}`, `${receiverId}`],
       };
       db.query(query, (error, dbresult) => {
         if (error) {
+          console.log(error);
           return res.status(500).json({
             status: 500,
             error: {
@@ -194,7 +194,7 @@ class Messages {
       if (result.rowCount < 1) {
         return res.status(404).json({
           status: 404,
-          error: 'Sorry, no message found this user',
+          error: 'Sorry, no received messages for you',
         });
       }
       return res.status(200).json({
@@ -240,7 +240,7 @@ class Messages {
       if (result.rowCount < 1) {
         return res.status(404).json({
           status: 404,
-          error: 'No unread messages for this user',
+          error: 'No unread messages for you',
         });
       }
       return res.status(200).json({
@@ -275,7 +275,7 @@ class Messages {
       if (result.rowCount < 1) {
         return res.status(404).json({
           status: 404,
-          error: 'No sent messages for this user',
+          error: 'No sent messages for you',
         });
       }
       return res.status(200).json({
@@ -318,7 +318,7 @@ class Messages {
         });
       }
       const newQuery = {
-        text: `SELECT * FROM messages WHERE id = ${id}`,
+        text: `SELECT * FROM messages WHERE id = ${id} AND messages.receiverId = ${decoded.userId}`,
       };
       db.query(newQuery, (error, newResult) => {
         if (error) {
@@ -330,7 +330,7 @@ class Messages {
         if (newResult.rowCount < 1) {
           return res.status(404).json({
             status: 404,
-            error: 'Message not found',
+            error: 'The message does not exist',
           });
         }
         return res.status(200).json({
@@ -363,7 +363,7 @@ class Messages {
       if (result.rowCount < 1) {
         return res.status(404).json({
           status: 404,
-          error: 'Message not found',
+          error: 'The message does not exist',
         });
       }
       return res.status(200).json({

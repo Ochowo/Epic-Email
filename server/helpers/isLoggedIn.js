@@ -9,13 +9,13 @@ const isLoggedIn = (req, res, next) => {
     if (token === null || token === '' || token === undefined) {
       return res.status(401).json({
         status: 401,
-        error: 'No token provided.',
+        error: 'Unauthorized access.',
       });
     // eslint-disable-next-line no-else-return
     } else if (err) {
       return res.status(401).json({
         status: 401,
-        error: 'Failed to authenticate user token.',
+        error: 'Authentication failed',
       });
     }
     return null;
