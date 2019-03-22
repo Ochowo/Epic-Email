@@ -362,26 +362,34 @@ var Messages = function () {
       var id = req.params.id;
 
       var query = {
-        text: 'DELETE FROM messages where id = ' + id + ' AND senderId = ' + decoded.userId + ' OR receiverId = ' + decoded.userId
+        text: 'DELETE FROM inbox where messageId = ' + id + ' AND receiverId = ' + decoded.userId
       };
-      _index2.default.query(query, function (err, result) {
-        if (err) {
+      _index2.default.query(query, function (erkkr, resultk) {
+        if (erkkr) {
+          console.log(erkkr);
           return res.status(500).json({
             status: 500,
             error: 'An error occured while trying to get the message'
           });
         }
-        if (result.rowCount < 1) {
-          return res.status(404).json({
-            status: 404,
-            error: 'The message does not exist'
+        var qquery = {
+          text: 'DELETE FROM sent where messageId = ' + id + ' AND senderId = ' + decoded.userId
+        };
+        _index2.default.query(qquery, function (ekrr, ressult) {
+          if (ekrr) {
+            console.log(ekrr);
+            return res.status(500).json({
+              status: 500,
+              error: 'An error occured while trying to delete the message'
+            });
+          }
+
+          return res.status(200).json({
+            status: 200,
+            data: [{
+              message: 'message deleted succesfully'
+            }]
           });
-        }
-        return res.status(200).json({
-          status: 200,
-          data: [{
-            message: 'message deleted succesfully'
-          }]
         });
       });
     }
