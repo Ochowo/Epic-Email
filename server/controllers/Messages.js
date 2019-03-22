@@ -350,27 +350,35 @@ class Messages {
       id,
     } = req.params;
     const query = {
-      text: `DELETE FROM messages where id = ${id} AND senderId = ${decoded.userId} OR receiverId = ${decoded.userId}`,
+      text: `DELETE FROM inbox where messageId = ${id} AND receiverId = ${decoded.userId}`,
     };
-    db.query(query, (err, result) => {
-      if (err) {
+    db.query(query, (erkkr, resultk) => {
+      if (erkkr) {
+        console.log(erkkr)
         return res.status(500).json({
           status: 500,
           error: 'An error occured while trying to get the message',
         });
       }
-      if (result.rowCount < 1) {
-        return res.status(404).json({
-          status: 404,
-          error: 'The message does not exist',
-        });
-      }
+      const qquery = {
+        text: `DELETE FROM sent where messageId = ${id} AND senderId = ${decoded.userId}`,
+      };
+      db.query(qquery, (ekrr, ressult) => {
+        if (ekrr) {
+          console.log(ekrr)
+          return res.status(500).json({
+            status: 500,
+            error: 'An error occured while trying to delete the message',
+          });
+        }
+      
       return res.status(200).json({
         status: 200,
         data: [{
           message: 'message deleted succesfully',
         }],
       });
+    });
     });
   }
 }
