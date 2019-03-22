@@ -54,6 +54,7 @@ var Groups = function () {
           error: errors
         });
       }
+      console.log('----', decoded);
       var newRole = 'admin';
       var query = {
         text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
@@ -61,6 +62,7 @@ var Groups = function () {
       };
       _index2.default.query(query, function (error, result) {
         if (error) {
+          console.log('---', error);
           return res.status(500).json({
             status: 500,
             error: {

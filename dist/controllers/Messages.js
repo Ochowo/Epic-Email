@@ -245,7 +245,6 @@ var Messages = function () {
   }, {
     key: 'getUnread',
     value: function getUnread(req, res) {
-      // Check header or url parameters or post parameters for token
       var token = req.body.token || req.query.token || req.headers['x-access-token'];
       // Decode token
       var decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);

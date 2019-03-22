@@ -34,9 +34,9 @@ var grpMsgQuery = function () {
             // Create groupMessage table in the database
             _context.next = 4;
             return _index2.default.query(sqlQuery).then(function (res) {
-              console.log(res);
+              // console.log(res);
             }).catch(function (err) {
-              console.log(err);
+              // console.log(err);
             });
 
           case 4:

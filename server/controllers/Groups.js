@@ -20,6 +20,7 @@ class Groups {
         error: errors,
       });
     }
+    console.log('----', decoded);
     const newRole = 'admin';
     const query = {
       text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
@@ -27,6 +28,7 @@ class Groups {
     };
     db.query(query, (error, result) => {
       if (error) {
+        console.log('---', error);
         return res.status(500).json({
           status: 500,
           error: {

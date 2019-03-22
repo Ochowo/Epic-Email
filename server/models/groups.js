@@ -17,10 +17,10 @@ FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
   }
   await db.query(sqlQuery)
     .then((res) => {
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
     });
 };
 export default groupQuery;
