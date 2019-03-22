@@ -8,7 +8,6 @@ dotenv.config();
 
 class Groups {
   static newGroup(req, res) {
-
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
@@ -21,39 +20,30 @@ class Groups {
         error: errors,
       });
     }
+    console.log('----', decoded);
     const newRole = 'admin';
-    const dec = decoded.userId;
-    db.query(`SELECT * FROM users WHERE id =${dec}`, (err, rest) => {
-      if (rest.rowCount < 1) {
-        return res.status(404).json({
-          status: 404,
-          error: 'Sorry, user is not signed in',
+    const query = {
+      text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
+      values: [`${name}`, `${newRole}`, `${decoded.userId}`],
+    };
+    db.query(query, (error, result) => {
+      if (error) {
+        console.log('---', error);
+        return res.status(500).json({
+          status: 500,
+          error: {
+            message: 'An error occured while trying to create the group, please try again.',
+          },
         });
       }
-      const newGroup = rest.rows[0].id;
-      console.log(newGroup)
-      const query = {
-        text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
-        values: [`${name}`, `${newRole}`, `${newGroup}`],
-      };
-      db.query(query, (error, result) => {
-        if (error) {
-          console.log(error)
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to create the group, please try again.',
-            },
-          });
-        }
-        return res.status(201).json({
-          status: 201,
-          data: [{
-            details: result.rows[0],
-          }],
-        });
+      return res.status(201).json({
+        status: 201,
+        data: [{
+          details: result.rows[0],
+        }],
       });
     });
+    return null;
   }
 
   static getGroups(req, res) {

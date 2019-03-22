@@ -40,7 +40,6 @@ var Groups = function () {
   _createClass(Groups, null, [{
     key: 'newGroup',
     value: function newGroup(req, res) {
-
       var token = req.body.token || req.query.token || req.headers['x-access-token'];
       var decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
       var name = req.body.name;
@@ -55,39 +54,30 @@ var Groups = function () {
           error: errors
         });
       }
+      console.log('----', decoded);
       var newRole = 'admin';
-      var dec = decoded.userId;
-      _index2.default.query('SELECT * FROM users WHERE id =' + dec, function (err, rest) {
-        if (rest.rowCount < 1) {
-          return res.status(404).json({
-            status: 404,
-            error: 'Sorry, user is not signed in'
+      var query = {
+        text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
+        values: ['' + name, '' + newRole, '' + decoded.userId]
+      };
+      _index2.default.query(query, function (error, result) {
+        if (error) {
+          console.log('---', error);
+          return res.status(500).json({
+            status: 500,
+            error: {
+              message: 'An error occured while trying to create the group, please try again.'
+            }
           });
         }
-        var newGroup = rest.rows[0].id;
-        console.log(newGroup);
-        var query = {
-          text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
-          values: ['' + name, '' + newRole, '' + newGroup]
-        };
-        _index2.default.query(query, function (error, result) {
-          if (error) {
-            console.log(error);
-            return res.status(500).json({
-              status: 500,
-              error: {
-                message: 'An error occured while trying to create the group, please try again.'
-              }
-            });
-          }
-          return res.status(201).json({
-            status: 201,
-            data: [{
-              details: result.rows[0]
-            }]
-          });
+        return res.status(201).json({
+          status: 201,
+          data: [{
+            details: result.rows[0]
+          }]
         });
       });
+      return null;
     }
   }, {
     key: 'getGroups',
