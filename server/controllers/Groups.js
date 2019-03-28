@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import "babel-polyfill";
 import db from '../db/index';
 import nameValidator from '../validation/nameValidator';
 import grpValidator from '../validation/grpValidator';
@@ -7,8 +8,8 @@ import grpValidator from '../validation/grpValidator';
 dotenv.config();
 
 class Groups {
-  static newGroup(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async newGroup(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       name,
@@ -19,47 +20,54 @@ class Groups {
         status: 400,
         error: errors,
       });
-    }
-    const newRole = 'admin';
-    const query = {
-      text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
-      values: [`${name}`, `${newRole}`, `${decoded.userId}`],
-    };
-    db.query(query, (error, result) => {
-      if (error) {
-        return res.status(500).json({
-          status: 500,
-          error: {
-            message: 'An error occured while trying to create the group, please try again.',
-          },
+    } try {
+      const nameExists = (await db.query('SELECT * FROM groups WHERE name=$1 AND userid=$2', [name, decoded.userId])).rows[0];
+      if (nameExists) {
+        return res.status(404).json({
+          status: 404,
+          error: `Sorry, you have an existing group named ${name}`,
         });
       }
+      const newRole = 'admin';
+      const query = {
+        text: 'INSERT INTO groups(name,role,userId) VALUES($1,$2,$3) RETURNING *',
+        values: [`${name}`, `${newRole}`, `${decoded.userId}`],
+      };
+      const { rows } = await db.query(query);
+      const grp = rows[0];
+      const grpQuery = {
+        text: 'INSERT INTO groupMembers(id,name,userId,role,email) VALUES($1,$2,$3,$4,$5) RETURNING *',
+        values: [`${grp.id}`, `${grp.name}`, `${grp.userid}`, `${newRole}`, `${decoded.email}`],
+      };
+      await db.query(grpQuery);
       return res.status(201).json({
         status: 201,
         data: [{
-          details: result.rows[0],
+          details: rows,
         }],
       });
-    });
-    return null;
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while creating the group.',
+        },
+      });
+    }
   }
 
-  static getGroups(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async getGroups(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
-    const query = {
-      text: `SELECT * FROM groups WHERE userId = ${decoded.userId}`,
-    };
-    db.query(query, (eerr, newResult) => {
-      if (eerr) {
-        return res.status(500).json({
-          status: 500,
-          error: {
-            message: 'An error occured while trying to get the group, please try again.',
-          },
-        });
-      }
-      if (newResult.rowCount < 1) {
+    console.log(decoded)
+    try {
+      const query = {
+      text:  `SELECT * from groupMembers WHERE userid = ${decoded.userId}
+       ORDER BY id DESC`,
+      };
+      const { rows, rowCount } = await db.query(query);
+      if (rowCount === 0) {
         return res.status(404).json({
           status: 404,
           error: 'Sorry, no group found for this user',
@@ -68,15 +76,23 @@ class Groups {
       return res.status(200).json({
         status: 200,
         data: [{
-          details: newResult.rows,
+          details: rows,
         }],
       });
-    });
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting the group.',
+        },
+      });
+    }
   }
 
-  static updateGroup(req, res) {
+  static async updateGroup(req, res) {
     // Check header or url parameters or post parameters for token
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+    const token = req.headers['x-access-token'];
     // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const Id = decoded.userId;
@@ -84,6 +100,9 @@ class Groups {
     const {
       name,
     } = req.body;
+    if (Number.isNaN(Number(reqId))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
     const { errors, isValid } = nameValidator(req.body);
     if (!isValid) {
       return res.status(400).json({
@@ -91,69 +110,63 @@ class Groups {
         error: errors,
       });
     }
-    const query = {
-      text: 'UPDATE groups SET name = $1 WHERE id = $2 AND userId =$3',
-      values: [`${name}`, `${reqId}`, `${Id}`],
-    };
-
-    db.query(query, (errr, Ress) => {
-      if (errr) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to update the name of the group, please try again.',
-        });
-      }
-      if (Ress.rowCount < 1) {
+    try {
+      const nameExists = (await db.query('SELECT name FROM groups WHERE name=$1 AND userid=$2', [name, Id])).rows[0];
+      if (nameExists) {
         return res.status(404).json({
           status: 404,
-          error: `The Group ${name} does not exist for this user`,
+          error: `Sorry, you have an existing group named ${name}`,
         });
       }
+      const query = {
+        text: 'UPDATE groups SET name = $1 WHERE id = $2 AND userId =$3',
+        values: [`${name}`, `${reqId}`, `${Id}`],
+      };
+
+      await db.query(query);
       const newQuery = {
         text: `SELECT * FROM groups WHERE id = $1
         AND userId =$2`,
         values: [`${reqId}`, `${Id}`],
       };
-      db.query(newQuery, (er, newRes) => {
-        if (er) {
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to get the group, please try again.',
-            },
-          });
-        }
-        return res.status(200).json({
-          status: 200,
-          data: [{
-            details: newRes.rows,
-          }],
+      const { rows, rowCount } = await db.query(newQuery);
+      if (rowCount < 1) {
+        return res.status(404).json({
+          status: 404,
+          error: `The Group ${name} does not exist for this user`,
         });
+      }
+      return res.status(200).json({
+        status: 200,
+        data: [{
+          details: rows,
+        }],
       });
-      return null;
-    });
-    return null;
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while updating the group.',
+        },
+      });
+    }
   }
 
-  static deleteGroup(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async deleteGroup(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
     } = req.params;
-
-    const query = {
-      text: `DELETE FROM groups WHERE id = ${id} AND userId = ${decoded.userId}`,
-    };
-
-    db.query(query, (errorrs, newestRes) => {
-      if (errorrs) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to delete the group please try again.',
-        });
+    try {
+      if (Number.isNaN(Number(id))) {
+        return res.status(400).json({ status: 404, message: 'invalid route' });
       }
-      if (newestRes.rowCount < 1) {
+      const query = {
+        text: `DELETE FROM groups WHERE id = ${id} AND userId = ${decoded.userId}`,
+      };
+      const { rowCount } = await db.query(query);
+      if (rowCount < 1) {
         return res.status(404).json({
           status: 404,
           error: 'Sorry, requested group not found for this user',
@@ -163,11 +176,18 @@ class Groups {
         status: 200,
         data: 'Group deleted successfully.',
       });
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while deleting the group.',
+        },
+      });
+    }
   }
 
-  static createUser(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async createUser(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
@@ -175,100 +195,97 @@ class Groups {
     const {
       email,
     } = req.body;
-    const query = {
-      text: `SELECT * FROM groups WHERE userId = ${decoded.userId} AND id = ${id}`,
-    };
-    db.query(query, (newesterr, newestResult) => {
-      if (newesterr) {
-        return res.status(500).json({
-          status: 500,
+    try {
+      if (Number.isNaN(Number(id))) {
+        return res.status(400).json({ status: 404, message: 'invalid route' });
+      }
+      const userExists = (await db.query('SELECT * FROM users WHERE email=$1', [email])).rows[0];
+      if (!userExists) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Sorry, the email does not exist in the database',
+        });
+      }
+      const userAdmin = (await db.query('SELECT * FROM groups WHERE userId = $1 AND id = $2 AND role = $3', [decoded.userId, id, 'admin'])).rows[0];
+      if (!userAdmin) {
+        return res.status(400).json({
+          status: 400,
           error: {
-            message: 'An error occured while trying to get the user, please try again.',
+            message: 'only an admin can add a user to a group.',
           },
         });
       }
-      const gres = newestResult.rows[0].id;
-      const newQuery = {
-        text: 'SELECT * FROM users WHERE email = $1',
-        values: [`${email}`],
-      };
-      db.query(newQuery, (newesterror, newesttRes) => {
-        if (newesterror) {
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to get the group, please try again.',
-            },
-          });
-        }
-        const memberId = newesttRes.rows[0].id;
-        const userQuery = {
-          text: 'INSERT INTO groupMembers(id,userId,email) VALUES($1,$2,$3) RETURNING *',
-          values: [`${gres}`, `${memberId}`, `${email}`],
-        };
-        db.query(userQuery, (memberErr, memberRes) => {
-          if (memberErr) {
-            console.log(memberErr);
-            return res.status(500).json({
-              status: 500,
-              error: 'An error occured while creating this user please try again.',
-            });
-          }
-          return res.status(200).json({
-            status: 200,
-            data: [{
-              details: memberRes.rows[0],
-            }],
-          });
-        });
-        return null;
-      });
-      return null;
-    });
-  }
-
-  static deleteUser(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
-    const decoded = jwt.verify(token, process.env.SECRET);
-    const {
-      id,
-    } = req.params;
-
-    const dquery = {
-      text: `SELECT * FROM groups WHERE UserId = ${decoded.userId} AND id = ${id}`,
-    };
-
-    db.query(dquery, (dellError, dResult) => {
-      if (dellError) {
-        console.log(dellError);
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to delete the user please try again.',
+      console.log(userExists);
+      const { rowCount} = (await db.query('SELECT * FROM groupMembers WHERE userId=$1 AND id=$2', [userExists.userid, id]));
+      if (rowCount > 0) {
+        return res.status(404).json({
+          status: 404,
+          error: 'the user is already a member of the group',
         });
       }
-      const pId = dResult.rows[0].name;
-      const gId = dResult.rows[0].id;
-      const query = {
-        text: `DELETE FROM groupMembers WHERE id=${gId} AND userId=${decoded.userId}`,
+      const userQuery = {
+        text: 'INSERT INTO groupMembers(id,name,userId,email) VALUES($1,$2,$3,$4) RETURNING *',
+        values: [`${userAdmin.id}`, `${userAdmin.name}`, `${userExists.id}`, `${email}`],
       };
-
-      db.query(query, (delError) => {
-        if (delError) {
-          return res.status(500).json({
-            status: 500,
-            error: 'An error occured while trying to delete the user please try again.',
-          });
-        }
-        return res.status(200).json({
-          status: 200,
-          data: `User  with id => ${id}, deleted from the group ${pId} successfully.`,
-        });
+      const { rows } = await db.query(userQuery);
+      return res.status(200).json({
+        status: 200,
+        data: [{
+          details: rows[0],
+        }],
       });
-      return null;
-    });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while adding the user to the group.',
+        },
+      });
+    }
   }
 
-  static newMessage(req, res) {
+  static async deleteUser(req, res) {
+    const token = req.headers['x-access-token'];
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const {
+      userId,
+      id,
+    } = req.params;
+    try {
+      if (Number.isNaN(Number(id))) {
+        return res.status(400).json({ status: 404, message: 'invalid route' });
+      }
+      const userAdmin = (await db.query('SELECT * FROM groups WHERE userId = $1 AND id = $2 AND role = $3', [decoded.userId, id, 'admin'])).rows[0];
+
+      if (!userAdmin) {
+        return res.status(400).json({
+          status: 400,
+          error: {
+            message: 'only an admin can delete a user from a group.',
+          },
+        });
+      }
+      const query = {
+        text: `DELETE FROM groupMembers WHERE id=${id} AND userId=${userId}`,
+      };
+      db.query(query);
+      return res.status(200).json({
+        status: 200,
+        data: `User  with id => ${id}, deleted from the group ${userAdmin.name} successfully.`,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while adding the user to the group.',
+        },
+      });
+    }
+  }
+
+  static async newMessage(req, res) {
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const senderId = decoded.userId;
@@ -279,49 +296,42 @@ class Groups {
       parentMessageId,
     } = req.body;
     const reqId = req.params.id;
-    const { errors, Valid } = grpValidator(req.body);
-    if (!Valid) {
-      return res.status(400).json({
-        status: 400,
-        error: errors,
-      });
-    }
-    const querytxt = {
-      text: `SELECT * FROM groups WHERE UserId = ${decoded.userId} AND id = ${reqId}`,
-    };
-    db.query(querytxt, (ertr, result) => {
-      if (ertr) {
-        console.log(ertr)
-        return res.status(500).json({
-          status: 500,
-          error: {
-            message: 'An error occured while trying to send the message, please try again.',
-          },
+    try {
+      const { errors, Valid } = grpValidator(req.body);
+      if (!Valid) {
+        return res.status(400).json({
+          status: 400,
+          error: errors,
         });
       }
-      const receiverId = result.rows[0].id;
-      const query = {
-        text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
-        values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
-      };
-      db.query(query, (error2, dbresult) => {
-        if (error2) {
-          console.log(error2)
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to send the message, please try again.',
-            },
+      const userExists = (await db.query('SELECT * FROM groupMembers WHERE id =$1 AND UserId=$2', [reqId, decoded.userId ])).rows[0];
+        if (!userExists) {
+          return res.status(404).json({
+            status: 404,
+            error: 'Sorry, no group for this user',
           });
         }
-        return res.status(201).json({
-          status: 201,
-          data: [{
-            details: dbresult.rows[0],
-          }],
-        });
+        const receiverId = userExists.id;
+        const query = {
+          text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
+          values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
+        };
+        const { rows } = await db.query(query);
+          return res.status(201).json({
+            status: 201,
+            data: [{
+              details: rows[0],
+            }],
+          });
+    }catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while adding the user to the group.',
+        },
       });
-    });
+    }
   }
-}
+  }
 export default Groups;

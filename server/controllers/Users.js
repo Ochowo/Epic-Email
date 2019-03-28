@@ -1,7 +1,7 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import db from '../db/index';
+import "babel-polyfill";
+import authHelper from './authHelper';
 import { checkSigninInput, checkSignupInput } from '../validation/index';
 
 dotenv.config();
@@ -21,38 +21,37 @@ class Users {
      *
      * @memberOf Users
      */
-  static signup(req, res) {
+  static async signup(req, res) {
     const {
       email,
       firstName,
       lastName,
-      password,
     } = req.body;
-    const { errors, isValid } = checkSignupInput(req.body);
-    if (!isValid) {
-      return res.status(400).json({
-        status: 400,
-        error: errors,
-      });
-    }
-    const saltRounds = 10;
-    const encryptedPassword = bcrypt.hashSync(password, saltRounds);
-    const query = {
-      text: 'INSERT INTO users(email,firstName,lastName,password) VALUES($1,$2,$3,$4) RETURNING *',
-      values: [`${email}`, `${firstName}`, `${lastName}`, `${encryptedPassword}`],
-    };
-    db.query(query, (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to sign you up, please try again.',
+    try {
+      const { errors, isValid } = checkSignupInput(req.body);
+      if (!isValid) {
+        return res.status(400).json({
+          status: 400,
+          error: errors,
         });
       }
-      const user = result.rows[0];
-      const token = jwt.sign({ email: `${user.email}`, userId: `${user.id}` }, process.env.SECRET, {
-        expiresIn: 86400, // expires in 24 hours
-      });
+      // Check if a user with the provided email already exists
+      const existingUser = (await db.query('SELECT * FROM users WHERE email=$1', [email])).rowCount;
+      if (existingUser) {
+        return res.status(409).json({
+          status: 409,
+          error: `The email ${email} already exists`,
+        });
+      }
+      const encryptedPassword = authHelper.hashPassword(req.body.password);
+      const query = {
+        text: 'INSERT INTO users(email,firstName,lastName,password) VALUES($1,$2,$3,$4) RETURNING *',
+        values: [`${email}`, `${firstName}`, `${lastName}`, `${encryptedPassword}`],
+      };
+      const { rows } = await db.query(query);
+      const user = rows[0];
+      console.log(user.email)
+      const token = authHelper.generateToken(user.id, user.email);
       return res.status(201).json({
         status: 201,
         data: [{
@@ -62,66 +61,57 @@ class Users {
           lastName,
         }],
       });
-    });
-    return null;
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while trying to sign you up, please try again.',
+        },
+      });
+    }
   }
 
-  static signin(req, res) {
+  static async signin(req, res) {
     const {
       email,
       password,
     } = req.body;
-    const { errors, isValid } = checkSigninInput(req.body);
-    if (!isValid) {
-      return res.status(400).json({
-        status: 400,
-        error: errors,
-      });
-    }
-    const query = {
-      text: 'SELECT * FROM users WHERE email = $1',
-      values: [`${email}`],
-    };
-    db.query(query, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to sign you in, please try again.',
+    try {
+      const { errors, isValid } = checkSigninInput(req.body);
+      if (!isValid) {
+        return res.status(400).json({
+          status: 400,
+          error: errors,
         });
       }
-      if (result.rowCount === 0) {
-        return res.status(404).json({
-          status: 404,
-          error: 'Authentication failed. User not found',
-
-        });
+      const text = 'SELECT * FROM users WHERE email = $1';
+      const { rows } = await db.query(text, [req.body.email]);
+      if (!rows[0]) {
+        return res.status(404).json({ status: 404, error: 'Authentication failed. User not found'  });
       }
-      const crypticPassword = result.rows[0].password;
-      const validPassword = bcrypt.compareSync(password, crypticPassword);
-      if (!validPassword) {
-        return res.status(401).json({
-          status: 401,
-          error: 'Authentication failed. Wrong password',
-        });
+      if (!authHelper.comparePassword(rows[0].password, password)) {
+        return res.status(401).json({ status: 401, error: 'Authentication failed. Wrong password'  });
       }
-      const user = result.rows[0];
-      const token = jwt.sign({ email: `${email}`, userId: `${user.id}` }, process.env.SECRET, {
-        expiresIn: 86400,
-      });
-      const {
-        firstName,
-        lastName,
-      } = result.rows[0];
+      const user = rows[0];
+      const token = authHelper.generateToken(user.id, user.email);
       return res.status(200).json({
         status: 200,
         data: [{
-          message: `Welcome, ${firstName} ${lastName}`,
+          message: `Welcome, ${user.firstname} ${user.lastname}`,
           token,
           email,
         }],
       });
-    });
-    return null;
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while trying to sign you in, please try again.',
+        },
+      });
+    }
   }
 }
 export default Users;

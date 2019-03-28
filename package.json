@@ -33,6 +33,7 @@
     "nyc": "^13.3.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",

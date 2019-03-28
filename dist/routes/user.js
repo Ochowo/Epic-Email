@@ -16,7 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router();
 
-router.post('/signup', _helpers.userExists, _index.users.signup);
+router.post('/signup', _index.users.signup);
 router.post('/login', _index.users.signin);
 
 exports.default = router;

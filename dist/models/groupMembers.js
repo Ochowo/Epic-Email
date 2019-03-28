@@ -25,11 +25,11 @@ var grpMemberQuery = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            sqlQuery = 'CREATE TABLE IF NOT EXISTS groupMembers\n(id INT NOT NULL,\nuserId INT NOT NULL, role VARCHAR(255) DEFAULT \'member\' NOT NULL, email VARCHAR(255) NOT NULL,\nFOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,\nFOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)';
+            sqlQuery = 'CREATE TABLE IF NOT EXISTS groupMembers\n(id INT NOT NULL,\nuserId INT NOT NULL, name VARCHAR(255) NOT NULL, role VARCHAR(255) DEFAULT \'member\' NOT NULL, email VARCHAR(255) NOT NULL,\nFOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,\nFOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)';
 
 
             if (process.env.NODE_ENV === 'test') {
-              sqlQuery = 'DROP TABLE IF EXISTS groupMembers CASCADE;\n  CREATE TABLE IF NOT EXISTS groupMembers\n  (id INT NOT NULL, \n    userId INT NOT NULL, role VARCHAR(255) DEFAULT \'member\' NOT NULL,\n    FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,\n    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)';
+              sqlQuery = 'DROP TABLE IF EXISTS groupMembers CASCADE;\n  CREATE TABLE IF NOT EXISTS groupMembers\n  (id INT NOT NULL, \n    userId INT NOT NULL, name VARCHAR(255) NOT NULL, role VARCHAR(255) DEFAULT \'member\' NOT NULL,\n    FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,\n    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)';
             }
             // Create groupMember tablen in the database
             _context.next = 4;
