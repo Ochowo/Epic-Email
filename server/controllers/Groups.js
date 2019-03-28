@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import "babel-polyfill";
+import 'babel-polyfill';
 import db from '../db/index';
 import nameValidator from '../validation/nameValidator';
 import grpValidator from '../validation/grpValidator';
