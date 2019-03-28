@@ -6,7 +6,7 @@ dotenv.config();
 const grpMemberQuery = async () => {
   let sqlQuery = `CREATE TABLE IF NOT EXISTS groupMembers
 (id INT NOT NULL,
-userId INT NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL, email VARCHAR(255) NOT NULL,
+userId INT NOT NULL, name VARCHAR(255) NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL, email VARCHAR(255) NOT NULL,
 FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
 FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
 
@@ -14,7 +14,7 @@ FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
     sqlQuery = `DROP TABLE IF EXISTS groupMembers CASCADE;
   CREATE TABLE IF NOT EXISTS groupMembers
   (id INT NOT NULL, 
-    userId INT NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL,
+    userId INT NOT NULL, name VARCHAR(255) NOT NULL, role VARCHAR(255) DEFAULT 'member' NOT NULL,
     FOREIGN KEY(id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE)`;
   }

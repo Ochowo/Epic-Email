@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import 'babel-polyfill';
 import db from '../db/index';
 import { messageValidator } from '../validation/index';
 
@@ -20,8 +21,8 @@ class Messages {
    *
    * @memberOf Messages
    */
-  static newMessage(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async newMessage(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const senderId = decoded.userId;
 
@@ -37,130 +38,44 @@ class Messages {
         error: errors,
       });
     }
-    const querytxt = {
-      text: 'SELECT id FROM users WHERE email = $1',
-      values: [`${receiverEmail}`],
-    };
-    db.query(querytxt, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: {
-            message: 'An error occured while trying to send the message, please try again.',
-          },
-        });
-      }
-      if (result.rowCount < 1) {
+    try {
+      const userExists = (await db.query('SELECT * FROM users WHERE email=$1', [receiverEmail])).rows[0];
+      if (!userExists) {
         return res.status(404).json({
           status: 404,
           error: 'Sorry, the receiver email does not exist in the database',
         });
-      }
-      const receiverId = result.rows[0].id;
-      const query = {
+      } const query = {
         text: 'INSERT INTO messages(subject,message,senderId, receiverId) VALUES($1,$2,$3,$4) RETURNING *',
-        values: [`${subject}`, `${message}`, `${senderId}`, `${receiverId}`],
+        values: [`${subject}`, `${message}`, `${senderId}`, `${userExists.id}`],
       };
-      db.query(query, (error, dbresult) => {
-        if (error) {
-          console.log(error);
-          return res.status(500).json({
-            status: 500,
-            error: {
-              message: 'An error occured while trying to send the message, please try again.',
-            },
-          });
-        }
-        const messageId = dbresult.rows[0].id;
-        const newStatus = dbresult.rows[0].status;
-        const receivedQuery = {
-          text: 'INSERT INTO inbox(messageId,receiverId,senderId,status) VALUES($1,$2,$3,$4) RETURNING *',
-          values: [`${messageId}`, `${receiverId}`, `${senderId}`, `${newStatus}`],
-        };
-        db.query(receivedQuery, (newerr) => {
-          if (newerr) {
-            return res.status(500).json({
-              status: 500,
-              error: {
-                message: 'An error occured while trying to send the message, please try again.',
-              },
-            });
-          }
-          const {
-            status,
-          } = req.query;
-          const sentQuery = {
-            text: 'INSERT INTO sent(messageId,senderId,receiverId, status) VALUES($1,$2,$3,$4) RETURNING *',
-            values: [`${messageId}`, `${senderId}`, `${receiverId}`, `${status}`],
-          };
-          db.query(sentQuery, (newerrr) => {
-            if (newerrr) {
-              return res.status(500).json({
-                status: 500,
-                error: {
-                  message: 'An error occured while trying to send the message, please try again.',
-                },
-              });
-            }
-            const statusQuery = {
-              text: `UPDATE sent SET status = 
-              'sent'`,
-            };
-            db.query(statusQuery, (statuserr) => {
-              if (statuserr) {
-                return res.status(500).json({
-                  status: 500,
-                  error: {
-                    message: 'An error occured while trying to update the message status, please try again.',
-                  },
-                });
-              }
-              return null;
-            });
-            const draftQuery = {
-              text: 'INSERT INTO draft(messageId,senderId,receiverId, status) VALUES($1,$2,$3,$4) RETURNING *',
-              values: [`${messageId}`, `${senderId}`, `${receiverId}`, `${status}`],
-            };
-            db.query(draftQuery, (errorss) => {
-              if (errorss) {
-                return res.status(500).json({
-                  status: 500,
-                  error: {
-                    message: 'An error occured while trying to send the message, please try again.',
-                  },
-                });
-              }
-              const draftStatus = {
-                text: `UPDATE draft SET status = 
-                'draft'`,
-              };
-              db.query(draftStatus, (drafterror) => {
-                if (drafterror) {
-                  return res.status(500).json({
-                    status: 500,
-                    error: {
-                      message: 'An error occured while trying to update the message status, please try again.',
-                    },
-                  });
-                }
-                return null;
-              });
-              return null;
-            });
-            return null;
-          });
-          return res.status(201).json({
-            status: 201,
-            data: [{
-              details: dbresult.rows[0],
-            }],
-          });
-        });
-        return null;
+      const { rows } = await db.query(query);
+      const msg = rows[0];
+      const inboxQuery = {
+        text: 'INSERT INTO inbox(messageId,receiverId,senderId,status) VALUES($1,$2,$3,$4) RETURNING *',
+        values: [`${msg.id}`, `${msg.receiverid}`, `${senderId}`, `${msg.status}`],
+      };
+      await db.query(inboxQuery);
+      const status = 'sent';
+      const sentQuery = {
+        text: 'INSERT INTO sent(messageId,senderId,receiverId, status) VALUES($1,$2,$3,$4) RETURNING *',
+        values: [`${msg.id}`, `${senderId}`, `${msg.receiverid}`, `${status}`],
+      };
+      await db.query(sentQuery);
+      return res.status(201).json({
+        status: 201,
+        data: [{
+          details: rows[0],
+        }],
       });
-      return null;
-    });
-    return null;
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'Internal server error.',
+        },
+      });
+    }
   }
 
   /**
@@ -172,7 +87,7 @@ class Messages {
  *
  * @memberOf Messages
  */
-  static getAllMessages(req, res) {
+  static async getAllMessages(req, res) {
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
@@ -184,26 +99,28 @@ class Messages {
       JOIN messages ON inbox.messageId = messages.id) 
       WHERE inbox.receiverId = ${decoded.userId} ORDER BY messageId DESC`,
     };
-    db.query(query, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while retrieving all received messages',
-        });
-      }
-      if (result.rowCount < 1) {
+    try {
+      const { rows, rowCount } = await db.query(query);
+      if (rowCount === 0) {
         return res.status(404).json({
           status: 404,
-          error: 'Sorry, no received messages for you',
+          error: 'Sorry, no inbox messages for you',
         });
       }
       return res.status(200).json({
         status: 200,
         data: [{
-          inbox: result.rows,
+          inbox: rows,
         }],
       });
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting your inbox messages.',
+        },
+      });
+    }
   }
 
   /**
@@ -215,8 +132,8 @@ class Messages {
    *
    * @memberOf Messages
    */
-  static getUnread(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async getUnread(req, res) {
+    const token = req.headers['x-access-token'];
     // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
@@ -229,14 +146,9 @@ class Messages {
       WHERE inbox.receiverId = $1  AND inbox.status = 'unread' ORDER BY messageId DESC;`,
       values: [`${decoded.userId}`],
     };
-    db.query(query, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while retrieving unread messages',
-        });
-      }
-      if (result.rowCount < 1) {
+    try {
+      const { rows, rowCount } = await db.query(query);
+      if (rowCount < 1) {
         return res.status(404).json({
           status: 404,
           error: 'No unread messages for you',
@@ -245,14 +157,21 @@ class Messages {
       return res.status(200).json({
         status: 200,
         data: [{
-          unread: result.rows,
+          unread: rows,
         }],
       });
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting your unread messages.',
+        },
+      });
+    }
   }
 
-  static getSent(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async getSent(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT sent.messageId, messages.createdOn, messages.subject,
@@ -264,14 +183,9 @@ class Messages {
         WHERE sent.receiverId = $1 ORDER BY messageId DESC;`,
       values: [`${decoded.userId}`],
     };
-    db.query(query, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while retrieving sent messages',
-        });
-      }
-      if (result.rowCount < 1) {
+    try {
+      const { rows, rowCount } = await db.query(query);
+      if (rowCount < 1) {
         return res.status(404).json({
           status: 404,
           error: 'No sent messages for you',
@@ -280,106 +194,103 @@ class Messages {
       return res.status(200).json({
         status: 200,
         data: [{
-          Sent: result.rows,
+          sent: rows,
         }],
       });
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting your sent messages.',
+        },
+      });
+    }
   }
 
-  static getSpecificMessage(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async getSpecificMessage(req, res) {
+    const token = req.headers['x-access-token'];
     // Decode token
     const decoded = jwt.verify(token, process.env.SECRET);
 
     const {
       id,
     } = req.params;
-    const query = {
-      text: `UPDATE messages
-      SET status = 'read'
-      WHERE messages.id = ${id};
-      UPDATE  inbox
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
+    try {
+      const newQuery = {
+        text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
+        messages.message, inbox.senderId, inbox.receiverId,
+        messages.parentMessageId, inbox.status, users.email 
+        FROM ((inbox
+        JOIN users ON inbox.receiverId = users.id)
+        JOIN messages ON inbox.messageId = messages.id)
+        WHERE messageId = ${id} AND inbox.receiverId = ${decoded.userId}`,
+      };
+      const { rows, rowCount } = await db.query(newQuery);
+      const query = {
+        text: `UPDATE  inbox
       SET status = 'read'
       WHERE inbox.messageId = ${id} AND inbox.receiverId = ${decoded.userId};
       COMMIT;`,
-    };
-    db.query(query, (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to get the message',
-        });
-      }
-      if (result.rowCount < 1) {
+      };
+      await db.query(query);
+      if (rowCount < 1) {
         return res.status(404).json({
           status: 404,
           error: 'Message not found',
         });
-      }
-      const newQuery = {
-        text: `SELECT * FROM messages WHERE id = ${id} AND messages.receiverId = ${decoded.userId}`,
-      };
-      db.query(newQuery, (error, newResult) => {
-        if (error) {
-          return res.status(500).json({
-            status: 500,
-            error: 'An error occured while trying to get the message',
-          });
-        }
-        if (newResult.rowCount < 1) {
-          return res.status(404).json({
-            status: 404,
-            error: 'The message does not exist',
-          });
-        }
-        return res.status(200).json({
-          status: 200,
-          data: [{
-            message: newResult.rows,
-          }],
-        });
+      } return res.status(200).json({
+        status: 200,
+        data: [{
+          message: rows,
+        }],
       });
-      return null;
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting the message.',
+        },
+      });
+    }
   }
 
-  static deleteSpecificMessage(req, res) {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  static async deleteSpecificMessage(req, res) {
+    const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
     } = req.params;
-    const query = {
-      text: `DELETE FROM inbox where messageId = ${id} AND receiverId = ${decoded.userId}`,
-    };
-    db.query(query, (erkkr, resultk) => {
-      if (erkkr) {
-        console.log(erkkr)
-        return res.status(500).json({
-          status: 500,
-          error: 'An error occured while trying to get the message',
-        });
-      }
-      const qquery = {
-        text: `DELETE FROM sent where messageId = ${id} AND senderId = ${decoded.userId}`,
+    try {
+      const query = {
+        text: `DELETE FROM inbox WHERE inbox.messageId = ${id}
+      AND receiverId = ${decoded.userId}`,
       };
-      db.query(qquery, (ekrr, ressult) => {
-        if (ekrr) {
-          console.log(ekrr)
-          return res.status(500).json({
-            status: 500,
-            error: 'An error occured while trying to delete the message',
-          });
-        }
-      
+
+      await db.query(query);
+      const query2 = {
+        text: `DELETE FROM sent WHERE sent.messageId = ${id}
+      AND senderId = ${decoded.userId}`,
+      };
+
+      await db.query(query2);
+
       return res.status(200).json({
         status: 200,
         data: [{
           message: 'message deleted succesfully',
         }],
       });
-    });
-    });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while deleting the message.',
+        },
+      });
+    }
   }
 }
 export default Messages;
