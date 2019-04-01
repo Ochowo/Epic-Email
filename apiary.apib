@@ -1,0 +1,341 @@
+FORMAT: 1A
+HOST: https://epic-mail04.herokuapp.com/api/v1
+
+# Epic Mail
+A web app that helps people exchange messages/information over the internet.
+
+# Group Users
+
+## Auth Signup [/auth/signup]
+
+### signup [POST]
+create a new user
++ Attributes
+    + firstName (string, required)
+
+        + Sample: ochowo
+    + email (string, required)
+
+        + Sample: princess@gmail.com
+    + password (string, required)
+
+        + Sample: password
+    + confirmPassword (string, required)
+
+        + Sample: password
+    + lastName (string, required)
+
+        + Sample: Jones
+
++ Request (application/x-www-form-urlencoded)
+
+
+
+
++ Response 200 
+
+
+
+
+## Auth Login [/auth/login]
+
+### login [POST]
+login an existing user
++ Attributes
+    + email (string, required)
+
+        + Sample: princess@gmail.com
+    + password (string, required)
+
+        + Sample: password
+
++ Request (application/x-www-form-urlencoded)
+
+
+
+
++ Response 200 
+
+
+
+
+
+# Group Messages
+
+## Messages [/messages]
+
+### create message [POST]
+send email
++ Attributes
+    + subject (string, required)
+
+        + Sample: Explore
+    + message (string, required)
+
+        + Sample: Exploring Lagos
+    + receiverEmail (string, required)
+
+        + Sample: princess@gmail.com
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+### get messages [GET]
+view inbox
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Messages Unread [/messages/unread]
+
+### get unread messages [GET]
+view unread messages
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Messages Sent [/messages/sent]
+
+### get sent messages [GET]
+view sent
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Messages 1 [/messages/1]
+
+### get specific message [GET]
+TODO: Add Description
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+### delete a message [DELETE]
+delete a specific message
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicHJpbmNlc3NAZ21haWwuY29tIiwiaWF0IjoxNTUzODU1Mjg0LCJleHAiOjE1NTM5NDE2ODR9.L_Dfkp9cKn9Gb_OWpOiEUDmHOSf5ovLKSY4J0EnAwGg
+
+
+
+
+
++ Response 200 
+
+
+
+
+
+# Group Groups
+
+## Groups [/groups]
+
+### create groups [POST]
+create a group
++ Attributes
+    + name (string, required)
+
+        + Sample: epic
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+### get groups [GET]
+get existing group
+
++ Request 
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Groups 1 Name [/groups/1/name]
+
+### patch group name [PATCH]
+update group name
++ Attributes
+    + name (string, required)
+
+        + Sample: sparky
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Groups 1 [/groups/1]
+
+### delete group [DELETE]
+delete a specific group
++ Attributes
+    + name (string, required)
+
+        + Sample: funky
+
++ Request (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9pY0BnbWFpbC5jb20iLCJ1c2VySWQiOiI0IiwiaWF0IjoxNTUzMjI2ODc5LCJleHAiOjE1NTMzMTMyNzl9.9XkWh3mfct83wOjTeGn40_kITRkdHgwXc79MqCQDv00)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Groups 2 Users [/groups/2/users]
+
+### add a user to a group [POST]
+add users to group
++ Attributes
+    + email (string, required)
+
+        + Sample: princess@gmail.com
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Groups 2 Users 1 [/groups/2/users/1]
+
+### delete a user from a group [DELETE]
+remove a user from a group
++ Attributes
+    + email (string, required)
+
+        + Sample: princess@gmail.com
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200 
+
+
+
+
+## Groups 2 Messages [/groups/2/messages]
+
+### send message to a group [POST]
+send a message to a group
++ Attributes
+    + subject (string, required)
+
+        + Sample: explore
+    + message (string, required)
+
+        + Sample: visiting Lagos soon
+    + parentMessageId (string, required)
+
+        + Sample: 1
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+
+            x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoianVsaWVAZ21haWwuY29tIiwiaWF0IjoxNTUzODU4NDk2LCJleHAiOjE1NTM5NDQ4OTZ9.FKuQtB4jNXUCB0GFocTqSswGcHe4JjTpIl18eBdR6xo
+
+
+
+
+
++ Response 200
