@@ -47,7 +47,7 @@ class Groups {
         }],
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {
@@ -60,10 +60,10 @@ class Groups {
   static async getGroups(req, res) {
     const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
-    console.log(decoded)
+    console.log(decoded);
     try {
       const query = {
-      text:  `SELECT * from groupMembers WHERE userid = ${decoded.userId}
+        text: `SELECT * from groupMembers WHERE userid = ${decoded.userId}
        ORDER BY id DESC`,
       };
       const { rows, rowCount } = await db.query(query);
@@ -80,7 +80,7 @@ class Groups {
         }],
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {
@@ -216,7 +216,7 @@ class Groups {
         });
       }
       console.log(userExists);
-      const { rowCount} = (await db.query('SELECT * FROM groupMembers WHERE userId=$1 AND id=$2', [userExists.userid, id]));
+      const { rowCount } = (await db.query('SELECT * FROM groupMembers WHERE userId=$1 AND id=$2', [userExists.userid, id]));
       if (rowCount > 0) {
         return res.status(404).json({
           status: 404,
@@ -304,26 +304,26 @@ class Groups {
           error: errors,
         });
       }
-      const userExists = (await db.query('SELECT * FROM groupMembers WHERE id =$1 AND UserId=$2', [reqId, decoded.userId ])).rows[0];
-        if (!userExists) {
-          return res.status(404).json({
-            status: 404,
-            error: 'Sorry, no group for this user',
-          });
-        }
-        const receiverId = userExists.id;
-        const query = {
-          text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
-          values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
-        };
-        const { rows } = await db.query(query);
-          return res.status(201).json({
-            status: 201,
-            data: [{
-              details: rows[0],
-            }],
-          });
-    }catch (error) {
+      const userExists = (await db.query('SELECT * FROM groupMembers WHERE id =$1 AND UserId=$2', [reqId, decoded.userId])).rows[0];
+      if (!userExists) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Sorry, no group for this user',
+        });
+      }
+      const receiverId = userExists.id;
+      const query = {
+        text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
+        values: [`${subject}`, `${message}`, `${parentMessageId}`, `${senderId}`, `${receiverId}`],
+      };
+      const { rows } = await db.query(query);
+      return res.status(201).json({
+        status: 201,
+        data: [{
+          details: rows[0],
+        }],
+      });
+    } catch (error) {
       console.log(error);
       return res.status(500).json({
         status: 500,
@@ -333,5 +333,5 @@ class Groups {
       });
     }
   }
-  }
+}
 export default Groups;
