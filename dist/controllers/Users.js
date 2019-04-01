@@ -105,8 +105,6 @@ var Users = function () {
                 _ref2 = _context.sent;
                 rows = _ref2.rows;
                 user = rows[0];
-
-                console.log(user.email);
                 token = _authHelper2.default.generateToken(user.id, user.email);
                 return _context.abrupt('return', res.status(201).json({
                   status: 201,
@@ -118,11 +116,9 @@ var Users = function () {
                   }]
                 }));
 
-              case 22:
-                _context.prev = 22;
+              case 21:
+                _context.prev = 21;
                 _context.t0 = _context['catch'](1);
-
-                console.log(_context.t0);
                 return _context.abrupt('return', res.status(500).json({
                   status: 500,
                   error: {
@@ -130,12 +126,12 @@ var Users = function () {
                   }
                 }));
 
-              case 26:
+              case 24:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 22]]);
+        }, _callee, this, [[1, 21]]);
       }));
 
       function signup(_x, _x2) {
