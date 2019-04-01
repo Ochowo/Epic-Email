@@ -1,8 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import 'babel-polyfill';
+import cors from 'cors';
+
+
 import { users, messages, groups } from './routes/index';
 
 const app = express();
+app.use(cors());
 // Parse incoming request data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
