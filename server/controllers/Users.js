@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import db from '../db/index';
-import "babel-polyfill";
+import 'babel-polyfill';
 import authHelper from './authHelper';
 import { checkSigninInput, checkSignupInput } from '../validation/index';
 
@@ -50,7 +50,6 @@ class Users {
       };
       const { rows } = await db.query(query);
       const user = rows[0];
-      console.log(user.email)
       const token = authHelper.generateToken(user.id, user.email);
       return res.status(201).json({
         status: 201,
@@ -62,7 +61,6 @@ class Users {
         }],
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {

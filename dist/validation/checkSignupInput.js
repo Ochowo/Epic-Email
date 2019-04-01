@@ -41,7 +41,7 @@ var validateSigninInput = function validateSigninInput(data) {
   }
 
   if ((0, _isEmpty2.default)(data.password) || data.password.length <= 5) {
-    errors.password = 'Password name must contain a min of 5 characters';
+    errors.password = 'Password must contain a min of 5 characters';
   }
   if ((0, _isEmpty2.default)(data.password)) {
     errors.password = 'Password field is empty';
