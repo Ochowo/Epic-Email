@@ -1,42 +1,6 @@
-// const url = 'postgres://fstuncep:VZCliVsFmKa-fKkSe_72whdpH3BKmDgt@isilo.db.elephantsql.com:5432/fstuncep';
-// const signupForm = document.getElementById('signn-form');
-
-// const signupUser = (e) => {
-//   console.log('hyyy');
-//   const feedback4 = document.getElementById('#feedback4');
-//   const feedback2 = document.getElementById('#feedback4');
-//   const signupEmail = document.querySelector('.email2').value;
-//   e.preventDefault();
-//   const data = {
-//     name: signupForm.name.value,
-//     lname: signupForm.lname.value,
-//     email: signupForm.email.value,
-//     password: signupForm.password.value,
-//     cpassword: signupForm.cpassword.value,
-
-//   };
-//   console.log(data)
-//   fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(data),
-//   })
-//     .then(res => res.json())
-//     .then((result) => {
-//       console.log(result)
-//       if (result.status === 201) {
-//         localStorage.setItem('x-access-token', result.data.token);
-//         window.location.href = './user.html';
-//       }
-//     })
-//     .catch(errors){
-// console.log(errors)
-//     })
-// };
 const signupForm = document.getElementById('signn-form');
 const feedback2 = document.querySelector('#feedback2');
+const feedback9 = document.querySelector('#feedback9');
 function signup(e) {
   e.preventDefault();
   console.log('uuu');
@@ -68,12 +32,17 @@ function signup(e) {
     .then((result) => {
       if (result.status === 201) {
         console.log(result);
-        localStorage.setItem('x-access-token', result.data.token);
-        console.log(result.data.token);
+        localStorage.setItem('x-access-token', result.data[0].token);
         window.location.href = './user.html';
       } else if (result.status === 409) {
         feedback2.innerHTML = `The email ${email} already exists`;
         feedback2.style.display = 'block';
+      } else if (result.status === 500) {
+        // Internal server error
+        feedback9.style.display = 'block';
+        feedback9.innerHTML = 'An error occured while trying to sign you up, please try again.';
+        document.querySelector('.spinner').style.display = 'none';
+        document.querySelector('.signinText').innerHTML = 'Sign up';
       }
     });
 }
