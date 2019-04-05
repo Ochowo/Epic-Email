@@ -14,7 +14,7 @@ const checkSigninInput = (data) => {
     isEmpty(data.password)
     || data.password.length <= 5
   ) {
-    errors.password = 'Password name must contain a min of 5 characters';
+    errors.password = 'Password must contain a min of 5 characters';
   }
 
   return {

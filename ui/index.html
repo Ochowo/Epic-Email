@@ -19,12 +19,15 @@
                 <div class="pull-text"><p class="wel">Welcome!</p><br><p class="every"> Best in class mail that <br>connects you to<br>  people round the world.</p></div>
             </div>
             <div class="pull-right csd">
-                <form name="epic-sign" class="box bxx" id="bxx">
+                <form name="epic-sign" class="box bxx" id="bxx" action="#" method="POST">
                     <div class="logo-box"><a href = "#"><img src="img/logo.svg"></a></div>
                     <h2 class="boxx-tex">Sign in to use Epic Mail</h2>
-                    <input class="input" type="text" name="email" placeholder="Enter your email here" required><br>
-                    <input class="input" type="password" name="pass"placeholder="Enter your password here" name="Password" required><br>
-                    <button type="submit" class="logbtn">Login</button>
+                    <input class="input email3" type="text" name="email" placeholder="Enter your email here" required><br>
+                    <div id="feedback11"></div>
+                    <input class="input pass3" type="password" name="pass"placeholder="Enter your password here" name="Password" required><br>
+                    <div id="feedback12"></div>
+                    <button class="logbtn" onclick="validate()"><span class="signinText">Login</span><span class="spinner"></span></button>
+                    <div id="feedback13"></div>
                     <div class="acct" id = "forg">Forgot Password?</div>
                     <button class="create" id = "loggg">Create an account</button>
                 </form>
@@ -92,10 +95,7 @@
                     document.getElementById('bxx').style.display = "block";
                     }		
     </script>
-    <script>
-        
-  
-    </script>
     <script src="js/signup.js"></script>
+    <script src="js/signin.js"></script>
 </body>
 </html>
