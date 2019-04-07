@@ -112,3 +112,6 @@ const redirect = () => {
     document.querySelector('.signupText').innerHTML = 'Loading';
   }
 };
+function clearFeedback(val) {
+  document.querySelector(val).style.display = 'none';
+}

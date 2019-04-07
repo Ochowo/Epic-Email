@@ -72,23 +72,12 @@ const validate = () => {
     // User fields empty
     feedback12.innerHTML = 'Password must contain a min of 5 characters';
     feedback12.style.display = 'block';
+  } else {
+    // Show spinner and Loading
+    document.querySelector('.spinner').style.display = 'block';
+    document.querySelector('.signinText').innerHTML = 'Loading';
   }
 };
-//   if (email === '') {
-//     // User fields empty
-//     feedback11.innerHTML = 'Email field is empty';
-//     feedback11.style.display = 'block';
-//   }
-//    else if (!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))) {
-//     feedback11.innerHTML = 'You have entered an invalid email';
-//     feedback11.style.display = 'block';
-//   } if (password === '') {
-//     // User fields empty
-//     feedback12.innerHTML = 'Password field is empty';
-//     feedback12.style.display = 'block';
-//   } else if (password.length <= 5) {
-//     // User fields empty
-//     feedback12.innerHTML = 'Password must contain a min of 5 characters';
-//     feedback12.style.display = 'block';
-//   }
-// };
+function clearFeedback(val) {
+  document.querySelector(val).style.display = 'none';
+}
