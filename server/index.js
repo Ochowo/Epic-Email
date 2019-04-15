@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import 'babel-polyfill';
 import cors from 'cors';
-import morgan from 'morgan';
+// // import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { users, messages, groups } from './routes/index';
 
@@ -31,7 +31,7 @@ app.all('/*', (req, res, next) => {
 
 // Parse incoming request data
 
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 
 // Serve ui templates

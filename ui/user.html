@@ -18,7 +18,7 @@
             <button type="submit" class="top-subb"><i class="fa fa-search top-sub"></i></button>
           </form>
         </div>
-        <div class="userp"><i class='fas fa-user-circle top-us'></i><span class="usern">Ochowo Ikongbeh</span></div>
+        <div class="userp"><i class='fas fa-user-circle top-us'></i><span class="usern"></span></div>
       </div>    
   </nav>
   </header>
@@ -28,11 +28,11 @@
       <div class="lef-bo shok"> 
           <ul class="em-bnn" id="myTopnav">
               <li><button class="create cree cs" id="create"><a href="#">Compose</a></button></li>
-              <li><a href = "user.html">Inbox</a> <button class="em-btn">57</button></li>
-              <li><a href = "draft.html">Draft</a> <button class="em-btn">22</button> </li>
-              <li><a href = "sent.html">Sent</a> <button class="em-btn mvvv">11</button> </li>
-              <li><a href = "#">Spam</a> <button class="em-btn mvv">100</button> </li>
-              <li><a href = "sent.html">Trash</a> <button class="em-btn mv">22</button> </li>
+              <li><a href = "user.html">Inbox</a> <button class="em-btn"></button></li>
+              <li><a href = "draft.html">Draft</a></li>
+              <li><span class="seent">Sent</span></li>
+              <li><span class="unr">Unread</span></li>
+              <li><span class="tra">Trash</span></li>
               <li><h4 class="grp"> My Groups</h4></li>
               <li><a href="group.html">Sparks</a><i class="fa fa-envelope-o top-env bg"></i></li>
               <li><a href="group.html">Frontend</a><i class="fa fa-envelope-o top-env"></i></li>
@@ -48,86 +48,15 @@
           </ul>
         </div>    
       <div class="righ-bo baz">
-        <table style="width:100%" class="table" id="tbl">
-          <tr>
-            <th><input type="checkbox" name="check" value="check" class="check"></th>
-            <th></th> 
-            <th></th> 
-            <th><i class="fa fa-warning cau"></i>&nbsp;&nbsp;&nbsp; Spam</th>
-            <th><i class="fa fa-trash-o del"></i>&nbsp;&nbsp;&nbsp; Delete</th> 
-            <th><i class="fa fa-calendar cal"></i>&nbsp;&nbsp;&nbsp; Date </th> 
-      
-          </tr>
-          <tr class="unread">
-            <td><input type="checkbox" name="check" value="select" class="check"></td>
-            <td>Elon Musk</td>
-            <td class="ellip">
-                <div class="subject">New Lagos office</div>
-              Tesla X opening it’s first plan in Lagos, Nigeria Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam commodi pariatur fugit animi nostrum necessitatibus sunt consequatur enim repudiandae. Sequi vitae ipsum eveniet recusandae illo blanditiis unde iure nesciunt quo?
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente ducimus eligendi doloribus quos, eos itaque quo nemo suscipit! Provident accusamus quasi iusto nulla, sunt delectus quia? Impedit id suscipit minima?
-            </td>
-            <td><i class="fa fa-warning cau"></i></td>
-            <td><i class="fa fa-trash-o del"></i></td>
-            <td>oct 19, 2018</td> 
-          </tr>
-            <tr class="unread">
-              <td><input type="checkbox" name="check" value="select" class="check"></td>
-              <td>Julie Zhuo</td>
-              <td class="ellip">
-                  <div class="subject">[NO subject]</div>
-                Hey Andelans, I recommend Framer as a design tool for your Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo quam ipsam rem suscipit, voluptatem impedit cumque animi odit ut assumenda minima fugiat distinctio aspernatur in consectetur reprehenderit, necessitatibus eum accusantium!
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam ab error, velit corporis esse eaque vero, nostrum dolores nobis iure in suscipit amet libero. Quibusdam ad molestias quos corporis itaque!
-              </td>
-              <td><i class="fa fa-warning cau"></i></td>
-              <td><i class="fa fa-trash-o del"></i></td>
-              <td>oct 19, 2018</td> 
-            </tr>
-            <tr>
-              <td><input type="checkbox" name="check" value="select" class="check"></td>
-              <td>Mark Zuckerberg</td>
-              <td class="ellip">
-                  <div class="subject">Explore Lagos</div>
-                Good news! I will be visiting Lagos, Nigeria in June :)  Lorem, ipsum dolor sit amet 
-                consectetur adipisicing elit. Labore at eum animi esse quam 
-                repellendus in deleniti iste dolor culpa vitae, aspernatur adipisci 
-                omnis perspiciatis, ipsa corporis earum laborum a.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum, dolor,
-                  adipisci eligendi aut dolorum voluptas eos praesentium impedit sint nulla consequuntur fuga nostrum amet cupiditate asperiores ratione quia temporibus sed.
-              </td>
-              <td><i class="fa fa-warning cau"></i></td>
-              <td><i class="fa fa-trash-o del"></i></td>
-              <td>oct 19, 2018</td> 
-            </tr>
-          </table>
+          <table style="width:100%" class="table" id="tbl">
+        </table>
+         
+        <div id="output"></div>
           <div class="center-boxxx" id="mmo">
             <form class="box boxx" id="box23">
               <span class="close">&times;</span>
               <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
               <table id="tbll">
-                <tr>
-                  <td class="recieve">
-                    <i class="fa fa-warning cau rep"><span class="tooltiptext">spam</span></i>
-                    <i class="fa fa-trash-o del rep"><span class="tooltiptext">delete</span></i>
-                    <i class="fa fa-mail-reply cau rep"><span class="tooltiptext">reply</span></i><br>
-                    <h2 class="sender">Mark Zuckerberg</h2>
-                    Good news! I will be visiting Lagos, Nigeria in June :)  Lorem, ipsum
-                    dolor sit amet consectetur adipisicing elit. Labore at eum animi esse quam repellendus
-                    in deleniti iste dolor culpa vitae, aspernatur adipisci omnis perspiciatis, ipsa corporis earum laborum a.
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum, dolor, adipisci eligendi
-                    aut dolorum voluptas eos praesentium impedit sint nulla consequuntur fuga nostrum amet cupiditate asperiores ratione quia temporibus sed.
-                  </td>
-                </tr>
-                <tr> 
-                  <td class="recieve"> 
-                    <i class="fa fa-warning cau rep"><span class="tooltiptext">spam</span></i>
-                    <i class="fa fa-trash-o del rep"><span class="tooltiptext">delete</span></i>
-                    <i class="fa fa-mail-reply cau rep"><span class="tooltiptext">reply</span></i><br>
-                    <h2 class="reciever">Ochowo Ikongbeh</h2>
-                    yaay!!!Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                    Aliquam quaerat accusantium architecto quae odit temporibus saepe eligendi ad totam perferendis 
-                    repellendus nobis numquam magnam, iusto commodi illo alias nihil earum.
-                  </td>
-                </tr> 
                 </table> 
             </form>
           </div>
@@ -158,28 +87,7 @@
     </ul>
   </footer>
 <script>
-const tbl = document.getElementById("tbl");
-const modal = document.getElementById('mmo');
-const span = document.getElementsByClassName("close")[0];
-if (tbl != null) {
-  for (let i = 0; i < tbl.rows.length; i++) {
-    for (let j = 0; j < tbl.rows[i].cells.length; j++)
-      tbl.rows[i].cells[j].onclick = function () { getval(this); };
-  }
-}
-function getval() {
-  modal.style.display = "block";
-}
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-  modal.style.display = "none";
-}
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+
 </script> 
 <script>
     const tbll = document.getElementById("tbll");
@@ -225,6 +133,9 @@ window.onclick = function (event) {
     }
     </script>  
     
-    <script src="js/newMessage.js"></script>      
+    <script src="js/newMessage.js"></script> 
+    <script src="js/messages.js"></script> 
+    <script src="js/app.js"></script>  
+    <script src="js/getSpecific.js"></script>    
 </body>
 </html>

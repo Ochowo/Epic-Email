@@ -5,16 +5,19 @@ dotenv.config();
 
 const inboxQuery = async () => {
   let sqlQuery = `CREATE TABLE IF NOT EXISTS inbox
-    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL, 
+    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL,
+    sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL, 
     FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,
     FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)`;
 
   if (process.env.NODE_ENV === 'test') {
     sqlQuery = `DROP TABLE IF EXISTS inbox CASCADE;
   CREATE TABLE IF NOT EXISTS inbox
-    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL, 
-    FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,
-    FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)`;
+  (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL,
+  sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL,
+  FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,
+  FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)`;
+
   }
   // Create inbox table in the database
   await db.query(sqlQuery)

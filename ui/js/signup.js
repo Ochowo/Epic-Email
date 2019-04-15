@@ -32,7 +32,10 @@ function signup(e) {
     .then((result) => {
       if (result.status === 201) {
         console.log(result);
-        localStorage.setItem('x-access-token', result.data[0].token);
+        localStorage.setItem('x-access-token', result.data[0].userToken);
+        localStorage.setItem('userId', result.data[0].id);
+        localStorage.setItem('firstName', result.data[0].firstName);
+        localStorage.setItem('lastName', result.data[0].lastName);
         window.location.href = './user.html';
       } else if (result.status === 409) {
         feedback2.innerHTML = `The email ${email} already exists`;
@@ -44,7 +47,8 @@ function signup(e) {
         document.querySelector('.spinner').style.display = 'none';
         document.querySelector('.signinText').innerHTML = 'Sign up';
       }
-    });
+    })
+    .catch(error => console.log(error));
 }
 signupForm.addEventListener('submit', signup);
 const redirect = () => {

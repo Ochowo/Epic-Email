@@ -45,21 +45,24 @@ class Messages {
           status: 404,
           error: 'Sorry, the receiver email does not exist in the database',
         });
-      } const query = {
-        text: 'INSERT INTO messages(subject,message,senderId, receiverId) VALUES($1,$2,$3,$4) RETURNING *',
-        values: [`${subject}`, `${message}`, `${senderId}`, `${userExists.id}`],
+      }
+      const userName = (await db.query('SELECT * FROM users WHERE email=$1', [decoded.email])).rows[0];
+      console.log(userName);
+      const query = {
+        text: 'INSERT INTO messages(subject,message,senderId,receiverId,sfirstname,slastname,rusername,ruserlastname) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+        values: [`${subject}`, `${message}`, `${senderId}`, `${userExists.id}`, `${userName.firstname}`, `${userName.lastname}`, `${userExists.firstname}`, `${userExists.lastname}`],
       };
       const { rows } = await db.query(query);
       const msg = rows[0];
       const inboxQuery = {
-        text: 'INSERT INTO inbox(messageId,receiverId,senderId,status) VALUES($1,$2,$3,$4) RETURNING *',
-        values: [`${msg.id}`, `${msg.receiverid}`, `${senderId}`, `${msg.status}`],
+        text: 'INSERT INTO inbox(messageId,receiverId,senderId,status,sfirstname,slastname) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+        values: [`${msg.id}`, `${msg.receiverid}`, `${senderId}`, `${msg.status}`, `${userName.firstname}`, `${userName.lastname}`],
       };
       await db.query(inboxQuery);
       const status = 'sent';
       const sentQuery = {
-        text: 'INSERT INTO sent(messageId,senderId,receiverId, status) VALUES($1,$2,$3,$4) RETURNING *',
-        values: [`${msg.id}`, `${senderId}`, `${msg.receiverid}`, `${status}`],
+        text: 'INSERT INTO sent(messageId,senderId,receiverId,status,rusername,ruserlastname) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+        values: [`${msg.id}`, `${senderId}`, `${msg.receiverid}`, `${status}`, `${userName.firstname}`, `${userName.lastname}`],
       };
       await db.query(sentQuery);
       return res.status(201).json({
@@ -69,6 +72,7 @@ class Messages {
         }],
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {
@@ -92,8 +96,8 @@ class Messages {
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
-      messages.message, inbox.senderId, inbox.receiverId,
-      messages.parentMessageId, inbox.status, users.email 
+      messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,
+      messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname
       FROM ((inbox
       JOIN users ON inbox.receiverId = users.id)
       JOIN messages ON inbox.messageId = messages.id) 
@@ -109,11 +113,12 @@ class Messages {
       }
       return res.status(200).json({
         status: 200,
-        data: [{
+        data: {
           inbox: rows,
-        }],
+        },
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {
@@ -138,8 +143,8 @@ class Messages {
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
-      messages.message, inbox.senderId, inbox.receiverId,
-      messages.parentMessageId, inbox.status, users.email 
+      messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,
+      messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname
       FROM ((inbox
       JOIN users ON inbox.receiverId = users.id)
       JOIN messages ON inbox.messageId = messages.id) 
@@ -156,9 +161,9 @@ class Messages {
       }
       return res.status(200).json({
         status: 200,
-        data: [{
+        data: {
           unread: rows,
-        }],
+        },
       });
     } catch (error) {
       return res.status(500).json({
@@ -175,12 +180,12 @@ class Messages {
     const decoded = jwt.verify(token, process.env.SECRET);
     const query = {
       text: `SELECT sent.messageId, messages.createdOn, messages.subject,
-        messages.message, messages.senderId, messages.receiverId,
-        messages.parentMessageId, sent.status, users.email 
+        messages.message, sent.senderId, messages.receiverId,
+        messages.parentMessageId, sent.status, users.email, messages.rusername, messages.ruserlastname
         FROM ((sent
-        JOIN users ON sent.receiverId = users.id)
+        JOIN users ON sent.senderId = users.id)
         JOIN messages ON sent.messageId = messages.id) 
-        WHERE sent.receiverId = $1 ORDER BY messageId DESC;`,
+        WHERE sent.senderId = $1 ORDER BY messageId DESC;`,
       values: [`${decoded.userId}`],
     };
     try {
@@ -193,9 +198,9 @@ class Messages {
       }
       return res.status(200).json({
         status: 200,
-        data: [{
+        data: {
           sent: rows,
-        }],
+        },
       });
     } catch (error) {
       return res.status(500).json({
@@ -222,7 +227,7 @@ class Messages {
       const newQuery = {
         text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
         messages.message, inbox.senderId, inbox.receiverId,
-        messages.parentMessageId, inbox.status, users.email 
+        messages.parentMessageId, inbox.status, users.email,inbox.sfirstname, inbox.slastname, messages.ruserlastname, messages.rusername
         FROM ((inbox
         JOIN users ON inbox.receiverId = users.id)
         JOIN messages ON inbox.messageId = messages.id)
@@ -257,26 +262,159 @@ class Messages {
     }
   }
 
+  static async getSpecificSent(req, res) {
+    const token = req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    const {
+      id,
+    } = req.params;
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
+    try {
+      const newQuery = {
+        text: `SELECT sent.messageId, messages.createdOn, messages.subject,
+        messages.message, sent.senderId, sent.receiverId,
+        messages.parentMessageId, sent.status, users.email, messages.ruserlastname, messages.rusername
+        FROM ((sent
+        JOIN users ON sent.receiverId = users.id)
+        JOIN messages ON sent.messageId = messages.id)
+        WHERE messageId = ${id} AND sent.senderId = ${decoded.userId}`,
+      };
+      const query = {
+        text: `UPDATE  inbox
+      SET status = 'read'
+      WHERE inbox.messageId = ${id} AND inbox.receiverId = ${decoded.userId};
+      COMMIT;`,
+      };
+      await db.query(query);
+      const { rows, rowCount } = await db.query(newQuery);
+      if (rowCount < 1) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Message not found',
+        });
+      } return res.status(200).json({
+        status: 200,
+        data: [{
+          message: rows,
+        }],
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting the message.',
+        },
+      });
+    }
+  }
+
+  static async getSpecificUnread(req, res) {
+    const token = req.headers['x-access-token'];
+    // Decode token
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    const {
+      id,
+    } = req.params;
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
+    try {
+      const newQuery = {
+        text: `SELECT inbox.messageId, messages.createdOn, messages.subject,
+        messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,
+        messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname
+        FROM ((inbox
+        JOIN users ON inbox.receiverId = users.id)
+        JOIN messages ON inbox.messageId = messages.id) 
+        WHERE messageId = ${id} AND inbox.status = 'unread' AND inbox.receiverId = ${decoded.userId}`,
+      };
+      const { rows, rowCount } = await db.query(newQuery);
+      if (rowCount < 1) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Message not found',
+        });
+      } return res.status(200).json({
+        status: 200,
+        data: [{
+          message: rows,
+        }],
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while getting the message.',
+        },
+      });
+    }
+  }
+
   static async deleteSpecificMessage(req, res) {
     const token = req.headers['x-access-token'];
     const decoded = jwt.verify(token, process.env.SECRET);
     const {
       id,
     } = req.params;
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
     try {
       const query = {
         text: `DELETE FROM inbox WHERE inbox.messageId = ${id}
       AND receiverId = ${decoded.userId}`,
       };
+      const { rowCount } = await db.query(query);
+      if (rowCount < 1) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Message not found',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        data: [{
+          message: 'message deleted succesfully',
+        }],
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        error: {
+          message: 'An error occured while deleting the inbox message.',
+        },
+      });
+    }
+  }
 
-      await db.query(query);
-      const query2 = {
+  static async deleteSpecificSent(req, res) {
+    const token = req.headers['x-access-token'];
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const {
+      id,
+    } = req.params;
+    if (Number.isNaN(Number(id))) {
+      return res.status(400).json({ status: 404, message: 'invalid route' });
+    }
+    try {
+      const query = {
         text: `DELETE FROM sent WHERE sent.messageId = ${id}
-      AND senderId = ${decoded.userId}`,
+        AND senderId = ${decoded.userId}`,
       };
 
-      await db.query(query2);
-
+      const { rowCount } = await db.query(query);
+      if (rowCount < 1) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Message not found',
+        });
+      }
       return res.status(200).json({
         status: 200,
         data: [{
