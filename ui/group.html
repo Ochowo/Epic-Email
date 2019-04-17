@@ -148,16 +148,20 @@
             </form>
           </div>
           <div class="center-boxxx" id="mmoo">
-            <form class="box boxx" id="box25">
+            <form class="box boxx" id="box25" action="#" method="POST">
               <span class="closed">&times;</span>
               <div class="logo-box"><img src="logo.svg"></div>
               <h2 class="boxx-textt">Compose Message</h2>
-              <input class="input name1 textt newt" type="text" placeholder="To" name="name" required><br>
-              <input class="input name1 textt newt" type="text" placeholder="Subject" name="name" required><br>
-              <textarea rows="15" cols="30" class="teexs" placeholder="Enter message"></textarea>
-              <button class="create cree2 yh"><a href="#">Send</a></button>
+              <input class="input name1 textt newt" id="receiver" type="text" placeholder="To" name="name" oninput="clearFeedback('#feedback')"><br>
+              <div id="feedback"></div>
+              <input class="input name1 textt newt" id="subject" type="text" placeholder="Subject" name="name" oninput="clearFeedback('#feedback1')"><br>
+              <div id="feedback1"></div>
+              <textarea rows="15" cols="30" class="teexs" id="message" placeholder="Enter message" oninput="clearFeedback('#feedback2')"></textarea>
+              <div id="feedback2"></div>
+              <button class="create cree2 yh" id="newMessage" onclick="validator()"><span class="msgText">Send</span><span class="spinner"></span></button>
+              <div id="feedback3"></div>
             </form>
-          </div> 
+          </div>
       </div>
     </div>
   </section>
@@ -236,6 +240,7 @@
               x.className = "em-bnn";
             }
         }
-        </script>        
+        </script> 
+        <script src="js/newMessage.js"></script>        
       </body>
       </html>

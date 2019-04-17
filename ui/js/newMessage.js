@@ -24,7 +24,7 @@ const newMessage = (event) => {
   })
     .then(res => res.json())
     .then((result) => {
-      console.log(result);
+      console.log(result.data[0].details.id);
       if (result.status === 201) {
         document.querySelector('.spinner').style.display = 'none';
         document.querySelector('.msgText').innerHTML = 'Message Sent';

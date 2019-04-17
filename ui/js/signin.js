@@ -22,9 +22,10 @@ function login(event) {
     .then(res => res.json())
     .then((response) => {
       if (response.status === 200) {
-        console.log(response);
+        console.log(response.data[0].token);
         localStorage.setItem('x-access-token', response.data[0].token);
         window.location.href = './user.html';
+        message();
       } else if (response.error === 'Authentication failed. User not found') {
         feedback11.style.display = 'block';
         feedback11.innerHTML = 'Authentication failed. User not found';

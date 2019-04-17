@@ -8,6 +8,7 @@ import sentQuery from './sent';
 import userQuery from './users';
 
 const migrate = async () => {
+  console.log('heyyy');
   await userQuery();
   await groupQuery();
   await msgQuery();
