@@ -11,7 +11,7 @@
   <header class="header header2 header4">
       <nav class="nav">
           <div class="flexboxx">
-          <div class="logo bak"><a href = "#"><img src="img/logo.svg"></a> </div>
+          <div class="logo bak"><a href = "index.html"><img src="img/logo.svg"></a> </div>
           <div class="search-container">
               <form action="#">
                   <input type="text" placeholder="Search inbox.." name="search" class="bor">
@@ -27,12 +27,18 @@
     <div class="container2 tainn">
       <div class="righ-bo boooo">
         <div class="center-boxxx boooo">
-            <form class="box boxx" id="box28">
-              <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
-              <table id="members">
-                </table> 
-            </form>
-          </div>
+          <div class="box boxx" id="newP">
+            <form id="box90">
+            <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
+            <h2 class="boxx-textt">Compose Message</h2>
+            <input class="input name1 textt newt" id="subjectt" type="text" placeholder="Subject" name="name" oninput="clearFeedback('#feedback1b')"><br>
+            <div id="feedback1b"></div>
+            <textarea rows="5" cols="10" class="teexsb" id="messageb" placeholder="Enter message" oninput="clearFeedback('#feedback2b')"></textarea>
+            <div id="feedback2b"></div>
+            <button class="create cree2 yh" id="newGrpMessage"><span class="grpmsgText">Send</span><span class="spinner"></span></button>
+            <div id="feedback3b"></div>
+          </form>
+        </div>
           </div> 
       </div>
     </div>
@@ -45,6 +51,6 @@
     </ul>
   </footer>
   <script src="js/groupInfo.js"></script> 
-  <script src="js/groupMembers.js"></script> 
+  <script src="js/groupMsgs.js"></script> 
       </body>
       </html>

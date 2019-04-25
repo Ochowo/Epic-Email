@@ -24,7 +24,6 @@ const newMessage = (event) => {
   })
     .then(res => res.json())
     .then((result) => {
-      console.log(result.data[0].details.id);
       if (result.status === 201) {
         document.querySelector('.spinner').style.display = 'none';
         document.querySelector('.msgText').innerHTML = 'Message Sent';
@@ -35,6 +34,10 @@ const newMessage = (event) => {
           document.querySelector('.cree2').style.backgroundColor = '#0067FC';
           document.querySelector('.cree2').style.borderColor = '#0067FC';
           document.querySelector('.msgText').innerHTML = 'Send';
+        }, 2000);
+        setTimeout(() => {
+          send.style.display = 'none';
+          document.location.reload(true);
         }, 2000);
       } else if (result.error === 'Sorry, the receiver email does not exist in the database') {
         feedback1.style.display = 'block';

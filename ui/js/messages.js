@@ -132,11 +132,9 @@ const sent = () => {
   })
     .then(res => res.json())
     .then((resp) => {
-      const inb = document.querySelector('#mvvp');
       if (resp.status === 200) {
         let table = '';
         const arrayOfmessages = resp.data.sent;
-        inb.innerHTML = `${arrayOfmessages.length}`;
         const sentMsg = document.querySelector('.seent');
         sentMsg.addEventListener('click', () => {
           table += `
