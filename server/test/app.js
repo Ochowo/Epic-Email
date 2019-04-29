@@ -60,8 +60,13 @@ const newMessage = {
   receiverId: 2,
   status: 'unread',
 };
+const grpMessage = {
+  subject: 'Heello',
+  message: 'Nice',
+  senderId: 1,
+};
 const newGroup = {
-  name: 'Funky',
+  name: 'groove',
 };
 const newMember = {
   name: 'oc',
@@ -233,7 +238,7 @@ describe('Epic Mail Test Suite', () => {
           res.body.data.should.be.a('array');
           done();
         });
-    }); 
+    });
     it('should not create a message if token is not provided', (done) => {
       chai.request(app)
         .post('/api/v1/messages')
@@ -249,28 +254,10 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-  });
-  // ====Get all Email==== //
-  describe('GET /messages', () => {
-    it('should return a list of all received messages', (done) => {
+    it('should not create message if token is wrong', (done) => {
       chai.request(app)
-        .get('/api/v1/messages')
-        .set('x-access-token', userToken)
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(200);
-          res.body.status.should.equal(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('status');
-          res.body.should.have.property('data');
-          res.body.status.should.be.a('number');
-          res.body.data.should.be.a('object');
-          done();
-        });
-    });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages')
+        .post('/api/v1/messages')
+        .set('x-access-token', wrongToken)
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(401);
@@ -284,7 +271,6 @@ describe('Epic Mail Test Suite', () => {
         });
     });
   });
-
 
   // ====Get all Email==== //
   describe('GET /messages', () => {
@@ -304,22 +290,7 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not get messages if token is not provided', (done) => {
-      chai.request(app)
-        .get('/api/v1/messages')
-        .end((err, res) => {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-    });
-    it('should not get messages if token is wrong', (done) => {
+    it('should not get all messages if token is wrong', (done) => {
       chai.request(app)
         .get('/api/v1/messages')
         .set('x-access-token', wrongToken)
@@ -335,9 +306,93 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
+    it('should not get messages if token is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
   });
+
+
+  // ====Get all unread Email==== //
+  describe('GET /messages/unread', () => {
+    it('should return a list of all unread messages', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/unread')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('object');
+          done();
+        });
+    });
+    it('should not get messages if token is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/unread')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+    it('should not get messages if token is wrong', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/unread')
+        .set('x-access-token', wrongToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+  });
+
   // ====Get all sent Email==== //
   describe('GET /messages/sent', () => {
+    it('should return a list of all sent messages', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/sent')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('object');
+          done();
+        });
+    });
     it('should not get messages if token is not provided', (done) => {
       chai.request(app)
         .get('/api/v1/messages/sent')
@@ -371,10 +426,28 @@ describe('Epic Mail Test Suite', () => {
         });
     });
   });
-  describe('GET /messages/unread', () => {
-    it('should not get messages if token is not provided', (done) => {
+
+  // ====Get a specific unread Email==== //
+  describe('GET /messages/unread/<message-id>', () => {
+    it('should return a a specific unread message', (done) => {
       chai.request(app)
-        .get('/api/v1/messages/unread')
+        .get('/api/v1/messages/unread/1')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
+    it('should not get unread message if token is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/unread/1')
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(401);
@@ -387,9 +460,9 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
-    it('should not get messages if token is wrong', (done) => {
+    it('should not get unread message if token is wrong', (done) => {
       chai.request(app)
-        .get('/api/v1/messages/unread')
+        .get('/api/v1/messages/unread/1')
         .set('x-access-token', wrongToken)
         .end((err, res) => {
           if (err) throw err;
@@ -404,8 +477,25 @@ describe('Epic Mail Test Suite', () => {
         });
     });
   });
+
   // ====Get a specific Email==== //
   describe('GET /messages/<message-id>', () => {
+    it('should return a a specific received message', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/1')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
     it('should not fetch a specific message if token is not provided', (done) => {
       chai.request(app)
         .get('/api/v1/messages/:id')
@@ -438,11 +528,79 @@ describe('Epic Mail Test Suite', () => {
         });
     });
   });
+
+  // ====Get a specific sent Email==== //
+  describe('GET /messages/sent/<message-id>', () => {
+    it('should return a a specific sent message', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/sent/1')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
+    it('should not get sent message if token is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/sent/1')
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+    it('should not get sent message if token is wrong', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/sent/1')
+        .set('x-access-token', wrongToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
+  });
+
   // ==== Delete a specific Email==== //
   describe('GET /messages/<message-id>', () => {
+    it('should delete a specific message', (done) => {
+      chai.request(app)
+        .get('/api/v1/messages/1')
+        .set('x-access-token', userToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(200);
+          res.body.status.should.equal(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('status');
+          res.body.should.have.property('data');
+          res.body.status.should.be.a('number');
+          res.body.data.should.be.a('array');
+          done();
+        });
+    });
     it('should not delete a specific message if token is not provided', (done) => {
       chai.request(app)
-        .delete('/api/v1/messages/:id')
+        .delete('/api/v1/messages/1')
         .end((err, res) => {
           if (err) throw err;
           res.status.should.equal(401);
@@ -457,7 +615,7 @@ describe('Epic Mail Test Suite', () => {
     });
     it('should not delete a specific message if token is wrong', (done) => {
       chai.request(app)
-        .delete('/api/v1/messages/:id')
+        .delete('/api/v1/messages/1')
         .set('x-access-token', wrongToken)
         .end((err, res) => {
           if (err) throw err;
@@ -490,8 +648,25 @@ describe('Epic Mail Test Suite', () => {
           done();
         });
     });
+    it('should not create group if token is wrong', (done) => {
+      chai.request(app)
+        .get('/api/v1/groups')
+        .set('x-access-token', wrongToken)
+        .end((err, res) => {
+          if (err) throw err;
+          res.status.should.equal(401);
+          res.body.status.should.equal(401);
+          res.body.should.have.property('error');
+          res.body.should.have.property('status');
+          res.body.should.be.a('object');
+          res.body.status.should.be.a('number');
+          res.body.error.should.be.a('string');
+          done();
+        });
+    });
   });
-  // ====Get all Email==== //
+
+  // ====Get all Groups==== //
   describe('GET /groups', () => {
     it('should not get groups if token is not provided', (done) => {
       chai.request(app)
