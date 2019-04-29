@@ -19,6 +19,7 @@
           </form>
         </div>
         <div class="userp"><i class='fas fa-user-circle top-us'></i><span class="usern"></span></div>
+        <button class="logout">logout</button>
       </div>    
   </nav>
   </header>
@@ -29,16 +30,12 @@
           <ul class="em-bnn" id="myTopnav">
               <li><button class="create cree cs" id="create"><a href="#">Compose</a></button></li>
               <li><a href = "user.html">Inbox</a> <button class="em-btn"></button></li>
-              <li><a href = "draft.html">Draft</a></li>
               <li><span class="seent">Sent</span></li>
               <li><span class="unr">Unread</span></li>
-              <li><span class="tra">Trash</span></li>
               <li><h4 class="grp"> My Groups</h4></li>
-              <li><a href="group.html">Sparks</a><i class="fa fa-envelope-o top-env bg"></i></li>
-              <li><a href="group.html">Frontend</a><i class="fa fa-envelope-o top-env"></i></li>
-              <li><a href="group.html">Software</a><i class="fa fa-envelope-o top-env"></i></li>
-              <li><a href="group.html">Backend</a><i class="fa fa-envelope-o top-env bgg"></i></li>
-              <li><a href="group.html">Funky</a><i class="fa fa-envelope-o top-env bg"></i></li>
+              <li>
+                <div id="table"></div>
+              </li>
               <li>
                 <span class="cr-grppp"><a href="new.html"><span class="plus">+</span><span class="crrr">Create group</span></a></span>
               </li>
@@ -50,8 +47,6 @@
       <div class="righ-bo baz">
           <table style="width:100%" class="table" id="tbl">
         </table>
-         
-        <div id="output"></div>
           <div class="center-boxxx" id="mmo">
             <form class="box boxx" id="box23">
               <span class="close">&times;</span>
@@ -74,7 +69,47 @@
               <button class="create cree2 yh" id="newMessage" onclick="validator()"><span class="msgText">Send</span><span class="spinner"></span></button>
               <div id="feedback3"></div>
             </form>
+            </div>
+            <div class="center-boxxx" id="mmop">
+              <form class="box boxx" id="box29" action="#" method="PATCH">
+                <span class="closev">&times;</span>
+                <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
+                <div class = "newoutput"></div>
+              </form>
+              <form class="box boxx" id="box28">
+                <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
+                <table id="members">
+                  </table> 
+                  <button class="btn-grp create creeee crs" id="crs" onclick="add(event)">Add New Members</button><br>
+            </form> 
+              <form class="box boxx hidden" id="box10" action="#" method="POST">
+                  <span class="closev">&times;</span>
+                  <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>  
+              <h2 class="boxx-textt">Add User </h2>
+              <input class="usergrpp grpp" id = "usergrpp" type="email" placeholder="user email" name="grpp" required><br>
+                  <div id="feedbacknn" class="yggii"></div>
+                  <button class="create cree2" id="newgrpuser"><span class="membTextt">Add</span><span class="spinner spinn" id="load"></span></button><br>
+              </form>
           </div>  
+          <div class="center-boxxx boooo" id="booooo">
+            <div class="box boxx" id="newP">
+              <div class="logo-box" id="logo-box"><a href ="index.html"><img src="logo.svg"></a></div>
+                <span class="closevb">&times;</span>
+                <form id="box50">
+                    <h2 class="messc">Messages</h2>
+                       <table id="nmsg"></table>
+              </form>
+              <form id="box90">
+              <input class="input name1 textt newt" id="subjectt" type="text" placeholder="Subject" name="name" oninput="clearFeedback('#feedback1b')"><br>
+              <div id="feedback1b"></div>
+              <textarea rows="5" cols="10" class="teexsb" id="messageb" placeholder="Enter message" oninput="clearFeedback('#feedback2b')"></textarea>
+              <div id="feedback2b"></div>
+              <button class="create cree2 yh" id="newGrpdMessage"><span class="grpmsgText">Send</span><span class="spinnt"></span></button>
+              <div id="feedback3b"></div>
+            </form>
+           
+          </div>
+            </div> 
       </div>
     </div>
   </section>
@@ -121,6 +156,14 @@ window.onclick = function (event) {
   }
 }
 </script>
+<script>
+function add(event) { 
+  event.preventDefault();
+  console.log('oi')
+  document.querySelector('#box28').style.display = 'none';
+  document.querySelector('.hidden').style.display = 'block';
+}
+</script>
   <script>
       function myFunction() {
         console.log("m00")
@@ -131,11 +174,12 @@ window.onclick = function (event) {
           x.className = "em-bnn";
         }
     }
-    </script>  
-    
+    </script> 
+
     <script src="js/newMessage.js"></script> 
     <script src="js/messages.js"></script> 
-    <script src="js/app.js"></script>  
-    <script src="js/getSpecific.js"></script>    
+    <script src="js/getSpecific.js"></script>  
+    <script src="js/group.js"></script> \
+    <script src="js/index.js"></script> 
 </body>
 </html>

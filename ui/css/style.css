@@ -285,9 +285,11 @@ td {
   }
 
 .unread {
-    font-weight: bold;
+    margin:5%;
   
 }
+#nmsg { width: 100%;
+text-align: justify;}
 th {
     border-bottom: 1px solid #EDEDED;
     text-align: left;
@@ -341,14 +343,16 @@ th {
     margin-top: 16%;
     border-bottom: 1px solid #EDEDED;
     padding-bottom: 3%;
-    margin-left:10%;
 
 }
 .textt {
     border-bottom:none;
 }
+.fgh {
+    display:flex;
+}
 .top-env {
-    margin-left: 45%;
+ width:10%;
     color:#cccbcb;
 }
 .bg {
@@ -363,6 +367,7 @@ th {
 .cr-grppp {
     display:inline;
     color:#EDEDED;
+    padding-top: 5%;
 }
 .em-bnn {
     margin-bottom: 12%;
@@ -383,6 +388,16 @@ th {
     font-size:100px;
     margin-top: 15%;
 }
+.logout {
+    width: 5%;
+    background-color: #0067FC;
+    border-radius: 4px;
+    margin-top: 0.7%;
+    color: #fff;
+    height: 40px;
+}
+.boooo,
+#mmop,
 #mmoo,
 #mmo {
     display: none; /* Hidden by default */
@@ -396,6 +411,10 @@ th {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
+
+.closedc,
+.closev,
+.closevb,
 .closed,
 .close {
     color: #aaaaaa;
@@ -418,6 +437,11 @@ th {
   overflow: hidden;
   cursor: pointer;
 }
+
+#newP,
+#box12,
+#box10,
+#box29,
 #box28,
 #box23 {
     height:600px;
@@ -425,6 +449,12 @@ th {
     width:70%;
     overflow:scroll;
     text-align: justify;
+}
+#newP {
+    text-align:center;
+}
+#subjectt {
+    width: 40%
 }
 .boxx-textt {
     padding: 5%;
@@ -437,10 +467,18 @@ th {
     margin-top: 10%;
 
 }
+.boxx-textt {
+    padding: 2%;
+}
 .teexs {
     width:80%;
     padding:2%;
     margin-top:5%;
+}
+.teexsb{
+    width:40%;
+    padding:1%;
+    margin-top:2%; 
 }
 .sent,
 .recieve{
@@ -459,6 +497,7 @@ th {
     margin: 2%;
     font-size: 1.5em;
     margin-left: 0;
+    margin-top: 0;
 }
 #logo-box {
     text-align: center;
@@ -509,6 +548,7 @@ th {
   width:80%;
   overflow: visible;
   height:auto;
+  display:none;
 }
 #table {
     width: 100%;
@@ -540,6 +580,17 @@ th {
 #subject {
     margin-top: 5%;
 }
+#feedbackn{
+    color:red;
+    padding: 0.3em 0 0 0.4em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px  
+}
+.fog{
+    width:85%;
+    padding-right: 10%;
+}
+#feedbacknn,
 #feedback,
 #feedback1,
 #feedback2,
@@ -555,6 +606,7 @@ th {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 10px;
 }
+
 .spinner {
     display:none;
     border: 3px solid #f3f3f3; /* Light grey */
@@ -566,7 +618,85 @@ th {
     margin-left: 5px;
     animation: spin 2s linear infinite;
   }
-  
+  .yt,
+  .gt {
+      width:15%;
+      margin-left: 3%;
+  }
+  #bn {
+      margin-bottom: 0;
+  }
+  .yg {
+      margin-left: 3%; 
+  }
+  #box29 {
+      text-align: center;
+    
+  }
+  #cl {
+      padding:2%;
+      margin-top: 3%;
+  }
+  #usergrpp,
+  #grpp {
+      border-bottom: 1px solid #EDEDED;
+      width:70%;
+      padding-bottom:2%
+  }
+  #newgrpp {
+      width:20%;
+  }
+  .dele {
+      float:left;
+      color:red;
+      font-size: 30px;
+      padding-bottom:2%;
+      margin-top:0.1%;
+  }
+  .successdel {
+      display: none;
+      margin-top:5%;
+  }
+  #newMsggs,
+ #newGrps {
+     margin-top:0;
+     width:15%;
+     padding:1% 0;
+     margin-left: 1%;
+     background-color: transparent;
+     color:#0067fc;
+     margin-top:2%;
+ }
+ #members {
+     width: 100%;
+     padding-left:8%;
+     padding-right: 8%;
+ }
+ .crs {
+     margin-top:2%;
+ }
+ #newgrpuser {
+    width: 18%;
+    padding: 1% 0;
+    margin-top:2%;
+ }
+ #box28 {
+  text-align: center;
+ }
+ 
+ .align {
+     text-align: left;
+ }
+ .hidden{
+     display:none;
+ }
+ #box10 {
+     height:500px;
+     width:60%;
+ }
+ #newGrpdMessage{
+     width:20%;
+ }
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -724,6 +854,10 @@ th {
 }
 .bg {
     margin-left: 47%;
+}
+#bgug {
+    margin-left: 0;
+    float: right;
 }
 .bgg {
     margin-left: 45%;
