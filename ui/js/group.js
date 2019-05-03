@@ -2,7 +2,7 @@
 const group = () => {
   const spinner = document.querySelector('.spinner');
   const token = window.localStorage.getItem('x-access-token');
-  const url = 'http://127.0.0.1:8000/api/v1/groups';
+  const url = 'https://epic-mail04.herokuapp.com/api/v1/groups';
   fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const updateGrp = (e) => {
   const groupEdit = document.querySelector('.grpp');
   const name = groupEdit.value;
   const id = groupEdit.getAttribute('groupid');
-  const url = `http://127.0.0.1:8000/api/v1/groups/${id}/name`;
+  const url = `https://epic-mail04.herokuapp.com/api/v1/groups/${id}/name`;
   const data = {
     name,
   };
@@ -119,7 +119,7 @@ const deleteGroup = () => {
   const token = window.localStorage.getItem('x-access-token');
   const groupEdit = document.querySelector('.grpp');
   const id = groupEdit.getAttribute('groupid');
-  fetch(`http://127.0.0.1:8000/api/v1/groups/${id}`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/groups/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const grpMembers = () => {
   const groupEdit = document.querySelector('.grpp');
   const id = groupEdit.getAttribute('groupid');
   let output = '';
-  fetch(`http://127.0.0.1:8000/api/v1/groups/${id}/users`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/groups/${id}/users`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': token,
@@ -200,7 +200,7 @@ const newGrpUser = (e) => {
   const data = {
     email,
   };
-  fetch(`http://127.0.0.1:8000/api/v1/groups/${id}/users`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/groups/${id}/users`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
@@ -254,7 +254,7 @@ const deleteUser = (userId) => {
   const id = groupEdit.getAttribute('groupid');
   const t = confirm('Are you sure you want to delete this user?');
   if (t === true) {
-    fetch(`http://127.0.0.1:8000/api/v1/groups/${id}/users/${userId}`, {
+    fetch(`https://epic-mail04.herokuapp.com/api/v1/groups/${id}/users/${userId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ const grpMsgs = (e) => {
     message,
   };
 
-  fetch(`http://127.0.0.1:8000/api/v1/groups/${id}/messages`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/groups/${id}/messages`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
@@ -347,7 +347,7 @@ const allMsg = () => {
   const id = groupEdit.getAttribute('groupid');
   const token = window.localStorage.getItem('x-access-token');
   const spinner = document.querySelector('.spinner');
-  const url = `http://127.0.0.1:8000/api/v1/groups/${id}/messages`;
+  const url = `https://epic-mail04.herokuapp.com/api/v1/groups/${id}/messages`;
   fetch(url, {
     headers: {
       'Content-Type': 'application/json',

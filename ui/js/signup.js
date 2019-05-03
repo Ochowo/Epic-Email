@@ -10,7 +10,7 @@ function signup(e) {
   const firstName = document.querySelector('.name2').value;
   const lastName = document.querySelector('.lname2').value;
 
-  const url = 'http://127.0.0.1:8000/api/v1/auth/signup';
+  const url = 'https://epic-mail04.herokuapp.com/api/v1/auth/signup';
 
   const data = {
     firstName,

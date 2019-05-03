@@ -29,7 +29,7 @@ var draftQuery = function () {
 
 
             if (process.env.NODE_ENV === 'test') {
-              sqlQuery = 'DROP TABLE IF EXISTS draft CASCADE;\n  CREATE TABLE IF NOT EXISTS draft\n    (senderId INT NOT NULL, messageId INT NOT NULL, receiverId INT NOT NULL, status VARCHAR(255) NOT NULL,\n    FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n    FOREIGN KEY(senderId) REFERENCES users(id) ON DELETE CASCADE,\n    FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
+              sqlQuery = 'DROP TABLE IF EXISTS draft CASCADE;\n  CREATE TABLE IF NOT EXISTS draft\n  (senderId INT NOT NULL, messageId INT NOT NULL, receiverId INT NOT NULL, status VARCHAR(255) NOT NULL,\n  FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n  FOREIGN KEY(senderId) REFERENCES users(id) ON DELETE CASCADE,\n  FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
             }
             // Create draft table in the database
             _context.next = 4;

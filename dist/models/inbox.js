@@ -25,11 +25,11 @@ var inboxQuery = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            sqlQuery = 'CREATE TABLE IF NOT EXISTS inbox\n    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL, \n    FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n    FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
+            sqlQuery = 'CREATE TABLE IF NOT EXISTS inbox\n    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL,\n    sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL, \n    FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n    FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
 
 
             if (process.env.NODE_ENV === 'test') {
-              sqlQuery = 'DROP TABLE IF EXISTS inbox CASCADE;\n  CREATE TABLE IF NOT EXISTS inbox\n    (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL, \n    FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n    FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
+              sqlQuery = 'DROP TABLE IF EXISTS inbox CASCADE;\n  CREATE TABLE IF NOT EXISTS inbox\n  (receiverId INT NOT NULL, messageId INT NOT NULL, senderId INT NOT NULL, status VARCHAR(255) NOT NULL,\n  sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL,\n  FOREIGN KEY(messageId) REFERENCES messages(id) ON DELETE CASCADE,\n  FOREIGN KEY(receiverId) REFERENCES users(id) ON DELETE CASCADE)';
             }
             // Create inbox table in the database
             _context.next = 4;

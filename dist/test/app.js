@@ -77,8 +77,13 @@ var newMessage = {
   receiverId: 2,
   status: 'unread'
 };
+var grpMessage = {
+  subject: 'Heello',
+  message: 'Nice',
+  senderId: 1
+};
 var newGroup = {
-  name: 'Funky'
+  name: 'groove'
 };
 var newMember = {
   name: 'oc'
@@ -110,7 +115,8 @@ describe('Epic Mail Test Suite', function () {
         res.body.data.should.be.a('array');
         done();
       });
-    });it('should register a new user', function (done) {
+    });
+    it('should register a new user', function (done) {
       _chai2.default.request(_index2.default).post('/api/v1/auth/signup').send(newUser2).end(function (err, res) {
         if (err) throw err;
         res.body.should.have.property('data');
@@ -146,8 +152,8 @@ describe('Epic Mail Test Suite', function () {
       });
     });
   });
-  // ==== Login a user ==== //
 
+  // ==== Login a user ==== //
   describe(' POST /auth/login - login a user', function () {
     it('should not login a user on invalid inputs', function (done) {
       _chai2.default.request(_index2.default).post('/api/v1/auth/login').send(invalidLogin).end(function (err, res) {
@@ -208,7 +214,7 @@ describe('Epic Mail Test Suite', function () {
   describe('POST/messages', function () {
     it('should create a message', function (done) {
       _chai2.default.request(_index2.default).post('/api/v1/messages').send(newMessage).set('x-access-token', userToken).end(function (err, res) {
-        if (err) throw err;
+        if (err) done(err);
         res.status.should.equal(201);
         res.body.status.should.equal(201);
         res.body.should.have.property('data');
@@ -232,208 +238,379 @@ describe('Epic Mail Test Suite', function () {
         done();
       });
     });
-    // ====Get all Email==== //
-    describe('GET /messages', function () {
-      it('should return a list of all received messages', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages').set('x-access-token', userToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(200);
-          res.body.status.should.equal(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('status');
-          res.body.should.have.property('data');
-          res.body.status.should.be.a('number');
-          res.body.data.should.be.a('array');
-          done();
-        });
-      });
-      it('should not get messages if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-      it('should not get messages if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
+    it('should not create message if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).post('/api/v1/messages').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
       });
     });
-    // ====Get all sent Email==== //
-    describe('GET /messages/sent', function () {
-      it('should not get messages if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/sent').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          res.body.error.should.equal('Unauthorized access.');
-          done();
-        });
-      });
-      it('should not get messages if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/sent').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-    });
-    describe('GET /messages/unread', function () {
-      it('should not get messages if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/unread').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-      it('should not get messages if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/unread').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-    });
-    // ====Get a specific Email==== //
-    describe('GET /messages/<message-id>', function () {
-      it('should not fetch a specific message if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/:id').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-      it('should not fetch a specific message if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/messages/:id').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-    });
-    // ==== Delete a specific Email==== //
-    describe('GET /messages/<message-id>', function () {
-      it('should not delete a specific message if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).delete('/api/v1/messages/:id').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-      it('should not delete a specific message if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).delete('/api/v1/messages/:id').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
-      });
-    });
+  });
 
-    // ====Create a Group==== //
-    describe('POST/groups', function () {
-      it('should not create a group if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).post('/api/v1/groups').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
+  // ====Get all Email==== //
+  describe('GET /messages', function () {
+    it('should return a list of all received messages', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('object');
+        done();
       });
     });
-    // ====Get all Email==== //
-    describe('GET /groups', function () {
-      it('should not get groups if token is not provided', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/groups').end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
+    it('should not get all messages if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
       });
-      it('should not get groups if token is wrong', function (done) {
-        _chai2.default.request(_index2.default).get('/api/v1/groups').set('x-access-token', wrongToken).end(function (err, res) {
-          if (err) throw err;
-          res.status.should.equal(401);
-          res.body.status.should.equal(401);
-          res.body.should.have.property('error');
-          res.body.should.have.property('status');
-          res.body.should.be.a('object');
-          res.body.status.should.be.a('number');
-          res.body.error.should.be.a('string');
-          done();
-        });
+    });
+    it('should not get messages if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get all unread Email==== //
+  describe('GET /messages/unread', function () {
+    it('should return a list of all unread messages', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('object');
+        done();
+      });
+    });
+    it('should not get messages if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not get messages if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get all sent Email==== //
+  describe('GET /messages/sent', function () {
+    it('should return a list of all sent messages', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('object');
+        done();
+      });
+    });
+    it('should not get messages if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        res.body.error.should.equal('Unauthorized access.');
+        done();
+      });
+    });
+    it('should not get messages if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get a specific unread Email==== //
+  describe('GET /messages/unread/<message-id>', function () {
+    it('should return a a specific unread message', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread/1').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('array');
+        done();
+      });
+    });
+    it('should not get unread message if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread/1').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not get unread message if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/unread/1').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get a specific Email==== //
+  describe('GET /messages/<message-id>', function () {
+    it('should return a a specific received message', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/1').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('array');
+        done();
+      });
+    });
+    it('should not fetch a specific message if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/:id').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not fetch a specific message if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/:id').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get a specific sent Email==== //
+  describe('GET /messages/sent/<message-id>', function () {
+    it('should return a a specific sent message', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent/1').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('array');
+        done();
+      });
+    });
+    it('should not get sent message if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent/1').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not get sent message if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/sent/1').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ==== Delete a specific Email==== //
+  describe('GET /messages/<message-id>', function () {
+    it('should delete a specific message', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/messages/1').set('x-access-token', userToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(200);
+        res.body.status.should.equal(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('data');
+        res.body.status.should.be.a('number');
+        res.body.data.should.be.a('array');
+        done();
+      });
+    });
+    it('should not delete a specific message if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).delete('/api/v1/messages/1').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not delete a specific message if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).delete('/api/v1/messages/1').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Create a Group==== //
+  describe('POST/groups', function () {
+    it('should not create a group if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).post('/api/v1/groups').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not create group if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/groups').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+  });
+
+  // ====Get all Groups==== //
+  describe('GET /groups', function () {
+    it('should not get groups if token is not provided', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/groups').end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
+      });
+    });
+    it('should not get groups if token is wrong', function (done) {
+      _chai2.default.request(_index2.default).get('/api/v1/groups').set('x-access-token', wrongToken).end(function (err, res) {
+        if (err) throw err;
+        res.status.should.equal(401);
+        res.body.status.should.equal(401);
+        res.body.should.have.property('error');
+        res.body.should.have.property('status');
+        res.body.should.be.a('object');
+        res.body.status.should.be.a('number');
+        res.body.error.should.be.a('string');
+        done();
       });
     });
   });

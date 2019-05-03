@@ -8,7 +8,7 @@ const newMessage = (event) => {
   const token = window.localStorage.getItem('x-access-token');
   const feedback1 = document.querySelector('#feedback1');
   const feedback3 = document.querySelector('#feedback3');
-  const url = 'http://127.0.0.1:8000/api/v1/messages';
+  const url = 'https://epic-mail04.herokuapp.com/api/v1/messages';
   const data = {
     receiverEmail,
     subject,

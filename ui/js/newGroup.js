@@ -8,7 +8,7 @@ const newGroup = (event) => {
   const name = document.querySelector('.name').value;
   const feedback = document.querySelector('#feedback');
   const token = window.localStorage.getItem('x-access-token');
-  const url = 'http://127.0.0.1:8000/api/v1/groups';
+  const url = 'https://epic-mail04.herokuapp.com/api/v1/groups';
   const data = {
     name,
   };

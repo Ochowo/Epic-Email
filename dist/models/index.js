@@ -47,38 +47,39 @@ var migrate = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
+            console.log('heyyy');
+            _context.next = 3;
             return (0, _users2.default)();
 
-          case 2:
-            _context.next = 4;
+          case 3:
+            _context.next = 5;
             return (0, _groups2.default)();
 
-          case 4:
-            _context.next = 6;
+          case 5:
+            _context.next = 7;
             return (0, _messages2.default)();
 
-          case 6:
-            _context.next = 8;
+          case 7:
+            _context.next = 9;
             return (0, _inbox2.default)();
 
-          case 8:
-            _context.next = 10;
+          case 9:
+            _context.next = 11;
             return (0, _sent2.default)();
 
-          case 10:
-            _context.next = 12;
+          case 11:
+            _context.next = 13;
             return (0, _draft2.default)();
 
-          case 12:
-            _context.next = 14;
+          case 13:
+            _context.next = 15;
             return (0, _groupMessages2.default)();
 
-          case 14:
-            _context.next = 16;
+          case 15:
+            _context.next = 17;
             return (0, _groupMembers2.default)();
 
-          case 16:
+          case 17:
           case 'end':
             return _context.stop();
         }

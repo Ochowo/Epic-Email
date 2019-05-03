@@ -31,7 +31,7 @@ const singleMsg = () => {
 
 const getSpecific = (val) => {
   const token = window.localStorage.getItem('x-access-token');
-  fetch(`http://127.0.0.1:8000/api/v1/messages/${val}`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/messages/${val}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': token,
@@ -66,7 +66,7 @@ const getSpecific = (val) => {
 const deleteSpecific = (id) => {
   const modal = document.getElementById('mmo');
   const token = window.localStorage.getItem('x-access-token');
-  fetch(`http://127.0.0.1:8000/api/v1/messages/${id}`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/messages/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const deleteSpecific = (id) => {
 };
 const getSpecificSent = (val) => {
   const token = window.localStorage.getItem('x-access-token');
-  fetch(`http://127.0.0.1:8000/api/v1/messages/sent/${val}`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/messages/sent/${val}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': token,
@@ -131,7 +131,7 @@ const getSpecificSent = (val) => {
 const deleteSpecificSent = (id) => {
   const modal = document.getElementById('mmo');
   const token = window.localStorage.getItem('x-access-token');
-  fetch(`http://127.0.0.1:8000/api/v1/messages/sent/${id}`, {
+  fetch(`https://epic-mail04.herokuapp.com/api/v1/messages/sent/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

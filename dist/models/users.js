@@ -24,6 +24,7 @@ var userQuery = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            console.log('heyyyxxxx');
             sqlQuery = 'CREATE TABLE IF NOT EXISTS users\n(id SERIAL NOT NULL PRIMARY KEY, email VARCHAR(255) NOT NULL UNIQUE,\nfirstName VARCHAR(255) NOT NULL, lastName VARCHAR(255) NOT NULL,\npassword VARCHAR(255) NOT NULL)';
 
 
@@ -31,14 +32,14 @@ var userQuery = function () {
               sqlQuery = 'DROP TABLE IF EXISTS users CASCADE;\n  CREATE TABLE IF NOT EXISTS users\n  (id SERIAL NOT NULL PRIMARY KEY, email VARCHAR(255) NOT NULL UNIQUE,\n  firstName VARCHAR(255) NOT NULL, lastName VARCHAR(255) NOT NULL,\n  password VARCHAR(255) NOT NULL)';
             }
             // Create userss table in the database
-            _context.next = 4;
+            _context.next = 5;
             return _index2.default.query(sqlQuery).then(function (res) {
-              // console.log(res);
+              //  console.log(res);
             }).catch(function (err) {
-              // console.log(err);
+              //  console.log(err);
             });
 
-          case 4:
+          case 5:
           case 'end':
             return _context.stop();
         }

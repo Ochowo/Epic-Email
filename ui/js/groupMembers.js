@@ -4,7 +4,7 @@ const grppMembers = () => {
   console.log(groupEdit);
   const id = groupEdit.getAttribute('groupid');
   let output = '';
-  fetch(`http://127.0.0.1:8000/api/v1/groups/${id}/users`, {
+  fetch(`https://epic-mail04.herokuapp.com/v1/groups/${id}/users`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': token,
