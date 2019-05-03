@@ -13,7 +13,7 @@ function login(event) {
     email: email,
     password: password
   };
-  var url = 'https://epic-mail04.herokuapp.com/v1/auth/login';
+  var url = 'https://epic-mail04.herokuapp.com/api/v1/auth/login';
   fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),
