@@ -3,7 +3,7 @@ const spinner = document.querySelector('.spinner');
 const token = window.localStorage.getItem('x-access-token');
 const firstname = window.localStorage.getItem('firstName');
 const lastname = window.localStorage.getItem('lastName');
-const url = 'http://127.0.0.1:8000/api/v1/messages';
+const url = 'https://epic-mail04.herokuapp.com/api/v1/messages';
 const message = () => {
   fetch(url, {
     headers: {

@@ -55,7 +55,7 @@ var Messages = function () {
      */
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-        var token, decoded, senderId, _req$body, subject, message, receiverEmail, _messageValidator, errors, isValid, userExists, query, _ref2, rows, msg, inboxQuery, status, sentQuery;
+        var token, decoded, senderId, _req$body, subject, message, receiverEmail, _messageValidator, errors, isValid, userExists, userName, query, _ref2, rows, msg, inboxQuery, status, sentQuery;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -96,34 +96,41 @@ var Messages = function () {
                 }));
 
               case 13:
+                _context.next = 15;
+                return _index2.default.query('SELECT * FROM users WHERE email=$1', [decoded.email]);
+
+              case 15:
+                userName = _context.sent.rows[0];
+
+                console.log(userName);
                 query = {
-                  text: 'INSERT INTO messages(subject,message,senderId, receiverId) VALUES($1,$2,$3,$4) RETURNING *',
-                  values: ['' + subject, '' + message, '' + senderId, '' + userExists.id]
+                  text: 'INSERT INTO messages(subject,message,senderId,receiverId,sfirstname,slastname,rusername,ruserlastname) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+                  values: ['' + subject, '' + message, '' + senderId, '' + userExists.id, '' + userName.firstname, '' + userName.lastname, '' + userExists.firstname, '' + userExists.lastname]
                 };
-                _context.next = 16;
+                _context.next = 20;
                 return _index2.default.query(query);
 
-              case 16:
+              case 20:
                 _ref2 = _context.sent;
                 rows = _ref2.rows;
                 msg = rows[0];
                 inboxQuery = {
-                  text: 'INSERT INTO inbox(messageId,receiverId,senderId,status) VALUES($1,$2,$3,$4) RETURNING *',
-                  values: ['' + msg.id, '' + msg.receiverid, '' + senderId, '' + msg.status]
-                };
-                _context.next = 22;
-                return _index2.default.query(inboxQuery);
-
-              case 22:
-                status = 'sent';
-                sentQuery = {
-                  text: 'INSERT INTO sent(messageId,senderId,receiverId, status) VALUES($1,$2,$3,$4) RETURNING *',
-                  values: ['' + msg.id, '' + senderId, '' + msg.receiverid, '' + status]
+                  text: 'INSERT INTO inbox(messageId,receiverId,senderId,status,sfirstname,slastname) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+                  values: ['' + msg.id, '' + msg.receiverid, '' + senderId, '' + msg.status, '' + userName.firstname, '' + userName.lastname]
                 };
                 _context.next = 26;
-                return _index2.default.query(sentQuery);
+                return _index2.default.query(inboxQuery);
 
               case 26:
+                status = 'sent';
+                sentQuery = {
+                  text: 'INSERT INTO sent(messageId,senderId,receiverId,status,rusername,ruserlastname) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',
+                  values: ['' + msg.id, '' + senderId, '' + msg.receiverid, '' + status, '' + userName.firstname, '' + userName.lastname]
+                };
+                _context.next = 30;
+                return _index2.default.query(sentQuery);
+
+              case 30:
                 return _context.abrupt('return', res.status(201).json({
                   status: 201,
                   data: [{
@@ -131,9 +138,11 @@ var Messages = function () {
                   }]
                 }));
 
-              case 29:
-                _context.prev = 29;
+              case 33:
+                _context.prev = 33;
                 _context.t0 = _context['catch'](7);
+
+                console.log(_context.t0);
                 return _context.abrupt('return', res.status(500).json({
                   status: 500,
                   error: {
@@ -141,12 +150,12 @@ var Messages = function () {
                   }
                 }));
 
-              case 32:
+              case 37:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[7, 29]]);
+        }, _callee, this, [[7, 33]]);
       }));
 
       function newMessage(_x, _x2) {
@@ -179,7 +188,7 @@ var Messages = function () {
                 token = req.body.token || req.query.token || req.headers['x-access-token'];
                 decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
                 query = {
-                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n      messages.message, inbox.senderId, inbox.receiverId,\n      messages.parentMessageId, inbox.status, users.email \n      FROM ((inbox\n      JOIN users ON inbox.receiverId = users.id)\n      JOIN messages ON inbox.messageId = messages.id) \n      WHERE inbox.receiverId = ' + decoded.userId + ' ORDER BY messageId DESC'
+                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n      messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,\n      messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname\n      FROM ((inbox\n      JOIN users ON inbox.receiverId = users.id)\n      JOIN messages ON inbox.messageId = messages.id) \n      WHERE inbox.receiverId = ' + decoded.userId + ' ORDER BY messageId DESC'
                 };
                 _context2.prev = 3;
                 _context2.next = 6;
@@ -203,14 +212,16 @@ var Messages = function () {
               case 11:
                 return _context2.abrupt('return', res.status(200).json({
                   status: 200,
-                  data: [{
+                  data: {
                     inbox: rows
-                  }]
+                  }
                 }));
 
               case 14:
                 _context2.prev = 14;
                 _context2.t0 = _context2['catch'](3);
+
+                console.log(_context2.t0);
                 return _context2.abrupt('return', res.status(500).json({
                   status: 500,
                   error: {
@@ -218,7 +229,7 @@ var Messages = function () {
                   }
                 }));
 
-              case 17:
+              case 18:
               case 'end':
                 return _context2.stop();
             }
@@ -258,7 +269,7 @@ var Messages = function () {
 
                 decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
                 query = {
-                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n      messages.message, inbox.senderId, inbox.receiverId,\n      messages.parentMessageId, inbox.status, users.email \n      FROM ((inbox\n      JOIN users ON inbox.receiverId = users.id)\n      JOIN messages ON inbox.messageId = messages.id) \n      WHERE inbox.receiverId = $1  AND inbox.status = \'unread\' ORDER BY messageId DESC;',
+                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n      messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,\n      messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname\n      FROM ((inbox\n      JOIN users ON inbox.receiverId = users.id)\n      JOIN messages ON inbox.messageId = messages.id) \n      WHERE inbox.receiverId = $1  AND inbox.status = \'unread\' ORDER BY messageId DESC;',
                   values: ['' + decoded.userId]
                 };
                 _context3.prev = 3;
@@ -283,9 +294,9 @@ var Messages = function () {
               case 11:
                 return _context3.abrupt('return', res.status(200).json({
                   status: 200,
-                  data: [{
+                  data: {
                     unread: rows
-                  }]
+                  }
                 }));
 
               case 14:
@@ -325,7 +336,7 @@ var Messages = function () {
                 token = req.headers['x-access-token'];
                 decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
                 query = {
-                  text: 'SELECT sent.messageId, messages.createdOn, messages.subject,\n        messages.message, messages.senderId, messages.receiverId,\n        messages.parentMessageId, sent.status, users.email \n        FROM ((sent\n        JOIN users ON sent.receiverId = users.id)\n        JOIN messages ON sent.messageId = messages.id) \n        WHERE sent.receiverId = $1 ORDER BY messageId DESC;',
+                  text: 'SELECT sent.messageId, messages.createdOn, messages.subject,\n        messages.message, sent.senderId, messages.receiverId,\n        messages.parentMessageId, sent.status, users.email, messages.rusername, messages.ruserlastname\n        FROM ((sent\n        JOIN users ON sent.senderId = users.id)\n        JOIN messages ON sent.messageId = messages.id) \n        WHERE sent.senderId = $1 ORDER BY messageId DESC;',
                   values: ['' + decoded.userId]
                 };
                 _context4.prev = 3;
@@ -350,9 +361,9 @@ var Messages = function () {
               case 11:
                 return _context4.abrupt('return', res.status(200).json({
                   status: 200,
-                  data: [{
+                  data: {
                     sent: rows
-                  }]
+                  }
                 }));
 
               case 14:
@@ -405,7 +416,7 @@ var Messages = function () {
               case 5:
                 _context5.prev = 5;
                 newQuery = {
-                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n        messages.message, inbox.senderId, inbox.receiverId,\n        messages.parentMessageId, inbox.status, users.email \n        FROM ((inbox\n        JOIN users ON inbox.receiverId = users.id)\n        JOIN messages ON inbox.messageId = messages.id)\n        WHERE messageId = ' + id + ' AND inbox.receiverId = ' + decoded.userId
+                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n        messages.message, inbox.senderId, inbox.receiverId,\n        messages.parentMessageId, inbox.status, users.email,inbox.sfirstname, inbox.slastname, messages.ruserlastname, messages.rusername\n        FROM ((inbox\n        JOIN users ON inbox.receiverId = users.id)\n        JOIN messages ON inbox.messageId = messages.id)\n        WHERE messageId = ' + id + ' AND inbox.receiverId = ' + decoded.userId
                 };
                 _context5.next = 9;
                 return _index2.default.query(newQuery);
@@ -464,62 +475,319 @@ var Messages = function () {
       return getSpecificMessage;
     }()
   }, {
-    key: 'deleteSpecificMessage',
+    key: 'getSpecificSent',
     value: function () {
       var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-        var token, decoded, id, query, query2;
+        var token, decoded, id, newQuery, query, _ref12, rows, rowCount;
+
         return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
                 token = req.headers['x-access-token'];
+                // Decode token
+
                 decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
                 id = req.params.id;
-                _context6.prev = 3;
+
+                if (!Number.isNaN(Number(id))) {
+                  _context6.next = 5;
+                  break;
+                }
+
+                return _context6.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+
+              case 5:
+                _context6.prev = 5;
+                newQuery = {
+                  text: 'SELECT sent.messageId, messages.createdOn, messages.subject,\n        messages.message, sent.senderId, sent.receiverId,\n        messages.parentMessageId, sent.status, users.email, messages.ruserlastname, messages.rusername\n        FROM ((sent\n        JOIN users ON sent.receiverId = users.id)\n        JOIN messages ON sent.messageId = messages.id)\n        WHERE messageId = ' + id + ' AND sent.senderId = ' + decoded.userId
+                };
+                query = {
+                  text: 'UPDATE  inbox\n      SET status = \'read\'\n      WHERE inbox.messageId = ' + id + ' AND inbox.receiverId = ' + decoded.userId + ';\n      COMMIT;'
+                };
+                _context6.next = 10;
+                return _index2.default.query(query);
+
+              case 10:
+                _context6.next = 12;
+                return _index2.default.query(newQuery);
+
+              case 12:
+                _ref12 = _context6.sent;
+                rows = _ref12.rows;
+                rowCount = _ref12.rowCount;
+
+                if (!(rowCount < 1)) {
+                  _context6.next = 17;
+                  break;
+                }
+
+                return _context6.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Message not found'
+                }));
+
+              case 17:
+                return _context6.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: [{
+                    message: rows
+                  }]
+                }));
+
+              case 20:
+                _context6.prev = 20;
+                _context6.t0 = _context6['catch'](5);
+                return _context6.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: {
+                    message: 'An error occured while getting the message.'
+                  }
+                }));
+
+              case 23:
+              case 'end':
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this, [[5, 20]]);
+      }));
+
+      function getSpecificSent(_x11, _x12) {
+        return _ref11.apply(this, arguments);
+      }
+
+      return getSpecificSent;
+    }()
+  }, {
+    key: 'getSpecificUnread',
+    value: function () {
+      var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
+        var token, decoded, id, newQuery, _ref14, rows, rowCount;
+
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                token = req.headers['x-access-token'];
+                // Decode token
+
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                id = req.params.id;
+
+                if (!Number.isNaN(Number(id))) {
+                  _context7.next = 5;
+                  break;
+                }
+
+                return _context7.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+
+              case 5:
+                _context7.prev = 5;
+                newQuery = {
+                  text: 'SELECT inbox.messageId, messages.createdOn, messages.subject,\n        messages.message, inbox.sfirstname, inbox.slastname,inbox.senderId, inbox.receiverId,\n        messages.parentMessageId, inbox.status, users.email, messages.rusername, messages.ruserlastname\n        FROM ((inbox\n        JOIN users ON inbox.receiverId = users.id)\n        JOIN messages ON inbox.messageId = messages.id) \n        WHERE messageId = ' + id + ' AND inbox.status = \'unread\' AND inbox.receiverId = ' + decoded.userId
+                };
+                _context7.next = 9;
+                return _index2.default.query(newQuery);
+
+              case 9:
+                _ref14 = _context7.sent;
+                rows = _ref14.rows;
+                rowCount = _ref14.rowCount;
+
+                if (!(rowCount < 1)) {
+                  _context7.next = 14;
+                  break;
+                }
+
+                return _context7.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Message not found'
+                }));
+
+              case 14:
+                return _context7.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: [{
+                    message: rows
+                  }]
+                }));
+
+              case 17:
+                _context7.prev = 17;
+                _context7.t0 = _context7['catch'](5);
+
+                console.log(_context7.t0);
+                return _context7.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: {
+                    message: 'An error occured while getting the message.'
+                  }
+                }));
+
+              case 21:
+              case 'end':
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this, [[5, 17]]);
+      }));
+
+      function getSpecificUnread(_x13, _x14) {
+        return _ref13.apply(this, arguments);
+      }
+
+      return getSpecificUnread;
+    }()
+  }, {
+    key: 'deleteSpecificMessage',
+    value: function () {
+      var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+        var token, decoded, id, query, _ref16, rowCount;
+
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                token = req.headers['x-access-token'];
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                id = req.params.id;
+
+                if (!Number.isNaN(Number(id))) {
+                  _context8.next = 5;
+                  break;
+                }
+
+                return _context8.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+
+              case 5:
+                _context8.prev = 5;
                 query = {
                   text: 'DELETE FROM inbox WHERE inbox.messageId = ' + id + '\n      AND receiverId = ' + decoded.userId
                 };
-                _context6.next = 7;
+                _context8.next = 9;
                 return _index2.default.query(query);
 
-              case 7:
-                query2 = {
-                  text: 'DELETE FROM sent WHERE sent.messageId = ' + id + '\n      AND senderId = ' + decoded.userId
-                };
-                _context6.next = 10;
-                return _index2.default.query(query2);
+              case 9:
+                _ref16 = _context8.sent;
+                rowCount = _ref16.rowCount;
 
-              case 10:
-                return _context6.abrupt('return', res.status(200).json({
+                if (!(rowCount < 1)) {
+                  _context8.next = 13;
+                  break;
+                }
+
+                return _context8.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Message not found'
+                }));
+
+              case 13:
+                return _context8.abrupt('return', res.status(200).json({
                   status: 200,
                   data: [{
                     message: 'message deleted succesfully'
                   }]
                 }));
 
+              case 16:
+                _context8.prev = 16;
+                _context8.t0 = _context8['catch'](5);
+                return _context8.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: {
+                    message: 'An error occured while deleting the inbox message.'
+                  }
+                }));
+
+              case 19:
+              case 'end':
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this, [[5, 16]]);
+      }));
+
+      function deleteSpecificMessage(_x15, _x16) {
+        return _ref15.apply(this, arguments);
+      }
+
+      return deleteSpecificMessage;
+    }()
+  }, {
+    key: 'deleteSpecificSent',
+    value: function () {
+      var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+        var token, decoded, id, query, _ref18, rowCount;
+
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                token = req.headers['x-access-token'];
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                id = req.params.id;
+
+                if (!Number.isNaN(Number(id))) {
+                  _context9.next = 5;
+                  break;
+                }
+
+                return _context9.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+
+              case 5:
+                _context9.prev = 5;
+                query = {
+                  text: 'DELETE FROM sent WHERE sent.messageId = ' + id + '\n        AND senderId = ' + decoded.userId
+                };
+                _context9.next = 9;
+                return _index2.default.query(query);
+
+              case 9:
+                _ref18 = _context9.sent;
+                rowCount = _ref18.rowCount;
+
+                if (!(rowCount < 1)) {
+                  _context9.next = 13;
+                  break;
+                }
+
+                return _context9.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Message not found'
+                }));
+
               case 13:
-                _context6.prev = 13;
-                _context6.t0 = _context6['catch'](3);
-                return _context6.abrupt('return', res.status(500).json({
+                return _context9.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: [{
+                    message: 'message deleted succesfully'
+                  }]
+                }));
+
+              case 16:
+                _context9.prev = 16;
+                _context9.t0 = _context9['catch'](5);
+                return _context9.abrupt('return', res.status(500).json({
                   status: 500,
                   error: {
                     message: 'An error occured while deleting the message.'
                   }
                 }));
 
-              case 16:
+              case 19:
               case 'end':
-                return _context6.stop();
+                return _context9.stop();
             }
           }
-        }, _callee6, this, [[3, 13]]);
+        }, _callee9, this, [[5, 16]]);
       }));
 
-      function deleteSpecificMessage(_x11, _x12) {
-        return _ref11.apply(this, arguments);
+      function deleteSpecificSent(_x17, _x18) {
+        return _ref17.apply(this, arguments);
       }
 
-      return deleteSpecificMessage;
+      return deleteSpecificSent;
     }()
   }]);
 

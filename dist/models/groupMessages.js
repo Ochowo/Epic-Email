@@ -25,11 +25,11 @@ var grpMsgQuery = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            sqlQuery = 'CREATE TABLE IF NOT EXISTS groupMessages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL,\n    senderId INT NOT NULL, groupId INT NOT NULL,\n   FOREIGN KEY(groupId) REFERENCES groups(id) ON DELETE CASCADE)';
+            sqlQuery = 'CREATE TABLE IF NOT EXISTS groupMessages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL,\n    senderId INT NOT NULL, groupId INT NOT NULL, messageId INT NOT NULL,\n   FOREIGN KEY(groupId) REFERENCES groups(id) ON DELETE CASCADE)';
 
 
             if (process.env.NODE_ENV === 'test') {
-              sqlQuery = 'DROP TABLE IF EXISTS messages CASCADE;\n  CREATE TABLE IF NOT EXISTS messages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL)';
+              sqlQuery = 'DROP TABLE IF EXISTS groupMessages CASCADE;\n  CREATE TABLE IF NOT EXISTS groupMessages\n   (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL,\n    senderId INT NOT NULL, groupId INT NOT NULL, messageId INT NOT NULL,\n   FOREIGN KEY(groupId) REFERENCES groups(id) ON DELETE CASCADE)';
             }
             // Create groupMessage table in the database
             _context.next = 4;

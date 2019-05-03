@@ -25,18 +25,18 @@ var msgQuery = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            sqlQuery = 'CREATE TABLE IF NOT EXISTS messages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL)';
+            sqlQuery = 'CREATE TABLE IF NOT EXISTS messages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL,\n    sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL, rusername VARCHAR(255) NOT NULL, ruserlastname VARCHAR(255) NOT NULL)';
 
 
             if (process.env.NODE_ENV === 'test') {
-              sqlQuery = 'DROP TABLE IF EXISTS messages CASCADE;\n  CREATE TABLE IF NOT EXISTS messages\n    (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n    message VARCHAR(255) NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL)';
+              sqlQuery = 'DROP TABLE IF EXISTS messages CASCADE;\n  CREATE TABLE IF NOT EXISTS messages\n  (id SERIAL NOT NULL PRIMARY KEY, createdOn TIMESTAMPTZ DEFAULT NOW(), subject VARCHAR(255) NOT NULL,\n  message VARCHAR NOT NULL, parentMessageId INT, status VARCHAR(255) DEFAULT \'unread\' NOT NULL, senderId INT NOT NULL, receiverId INT NOT NULL,\n  sfirstname VARCHAR(255) NOT NULL, slastname VARCHAR(255) NOT NULL, rusername VARCHAR(255) NOT NULL, ruserlastname VARCHAR(255) NOT NULL)';
             }
             // Create message table in the database
             _context.next = 4;
             return _index2.default.query(sqlQuery).then(function (res) {
               // console.log(res);
             }).catch(function (err) {
-              // console.log(err);
+              //  console.log(err);
             });
 
           case 4:

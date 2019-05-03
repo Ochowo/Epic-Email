@@ -21,5 +21,9 @@ router.get('/messages', _helpers.isLoggedIn, _index.message.getAllMessages);
 router.get('/messages/unread', _helpers.isLoggedIn, _index.message.getUnread);
 router.get('/messages/sent', _helpers.isLoggedIn, _index.message.getSent);
 router.get('/messages/:id', _helpers.isLoggedIn, _index.message.getSpecificMessage);
+router.get('/messages/sent/:id', _helpers.isLoggedIn, _index.message.getSpecificSent);
+router.get('/messages/unread/:id', _helpers.isLoggedIn, _index.message.getSpecificUnread);
 router.delete('/messages/:id', _helpers.isLoggedIn, _index.message.deleteSpecificMessage);
+router.delete('/messages/sent/:id', _helpers.isLoggedIn, _index.message.deleteSpecificSent);
+
 exports.default = router;

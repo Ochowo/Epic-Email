@@ -11,7 +11,7 @@ function login(event) {
     email,
     password,
   };
-  const url = 'http://127.0.0.1:8000/api/v1/auth/login';
+  const url = 'https://epic-mail04.herokuapp.com/v1/auth/login';
   fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),

@@ -79,8 +79,8 @@ var Groups = function () {
                   break;
                 }
 
-                return _context.abrupt('return', res.status(404).json({
-                  status: 404,
+                return _context.abrupt('return', res.status(409).json({
+                  status: 409,
                   error: 'Sorry, you have an existing group named ' + name
                 }));
 
@@ -177,9 +177,9 @@ var Groups = function () {
               case 12:
                 return _context2.abrupt('return', res.status(200).json({
                   status: 200,
-                  data: [{
+                  data: {
                     details: rows
-                  }]
+                  }
                 }));
 
               case 15:
@@ -189,9 +189,7 @@ var Groups = function () {
                 console.log(_context2.t0);
                 return _context2.abrupt('return', res.status(500).json({
                   status: 500,
-                  error: {
-                    message: 'An error occured while getting the group.'
-                  }
+                  error: 'An error occured while getting the group.'
                 }));
 
               case 19:
@@ -212,7 +210,7 @@ var Groups = function () {
     key: 'updateGroup',
     value: function () {
       var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
-        var token, decoded, Id, reqId, name, _nameValidator2, errors, isValid, nameExists, query, newQuery, _ref6, rows, rowCount;
+        var token, decoded, Id, reqId, name, _nameValidator2, errors, isValid, nameExists, query, queryy, newQuery, _ref6, rows, rowCount;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -232,7 +230,10 @@ var Groups = function () {
                   break;
                 }
 
-                return _context3.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+                return _context3.abrupt('return', res.status(400).json({
+                  status: 404,
+                  error: 'invalid route'
+                }));
 
               case 7:
                 _nameValidator2 = (0, _nameValidator4.default)(req.body), errors = _nameValidator2.errors, isValid = _nameValidator2.isValid;
@@ -260,34 +261,42 @@ var Groups = function () {
                   break;
                 }
 
-                return _context3.abrupt('return', res.status(404).json({
-                  status: 404,
+                return _context3.abrupt('return', res.status(409).json({
+                  status: 409,
                   error: 'Sorry, you have an existing group named ' + name
                 }));
 
               case 16:
                 query = {
-                  text: 'UPDATE groups SET name = $1 WHERE id = $2 AND userId =$3',
+                  text: 'UPDATE groups SET name = $1 WHERE id = $2 AND userId =$3;',
                   values: ['' + name, '' + reqId, '' + Id]
                 };
-                _context3.next = 19;
+                queryy = {
+                  text: 'UPDATE groupMembers SET name = $1 WHERE id = $2 AND userId =$3;',
+                  values: ['' + name, '' + reqId, '' + Id]
+                };
+                _context3.next = 20;
+                return _index2.default.query(queryy);
+
+              case 20:
+                _context3.next = 22;
                 return _index2.default.query(query);
 
-              case 19:
+              case 22:
                 newQuery = {
                   text: 'SELECT * FROM groups WHERE id = $1\n        AND userId =$2',
                   values: ['' + reqId, '' + Id]
                 };
-                _context3.next = 22;
+                _context3.next = 25;
                 return _index2.default.query(newQuery);
 
-              case 22:
+              case 25:
                 _ref6 = _context3.sent;
                 rows = _ref6.rows;
                 rowCount = _ref6.rowCount;
 
                 if (!(rowCount < 1)) {
-                  _context3.next = 27;
+                  _context3.next = 30;
                   break;
                 }
 
@@ -296,7 +305,7 @@ var Groups = function () {
                   error: 'The Group ' + name + ' does not exist for this user'
                 }));
 
-              case 27:
+              case 30:
                 return _context3.abrupt('return', res.status(200).json({
                   status: 200,
                   data: [{
@@ -304,22 +313,20 @@ var Groups = function () {
                   }]
                 }));
 
-              case 30:
-                _context3.prev = 30;
+              case 33:
+                _context3.prev = 33;
                 _context3.t0 = _context3['catch'](10);
                 return _context3.abrupt('return', res.status(500).json({
                   status: 500,
-                  error: {
-                    message: 'An error occured while updating the group.'
-                  }
+                  error: 'An error occured while updating the group.'
                 }));
 
-              case 33:
+              case 36:
               case 'end':
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[10, 30]]);
+        }, _callee3, this, [[10, 33]]);
       }));
 
       function updateGroup(_x5, _x6) {
@@ -348,7 +355,10 @@ var Groups = function () {
                   break;
                 }
 
-                return _context4.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+                return _context4.abrupt('return', res.status(400).json({
+                  status: 404,
+                  error: 'invalid route'
+                }));
 
               case 6:
                 query = {
@@ -422,7 +432,10 @@ var Groups = function () {
                   break;
                 }
 
-                return _context5.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+                return _context5.abrupt('return', res.status(400).json({
+                  status: 404,
+                  error: 'invalid route'
+                }));
 
               case 7:
                 _context5.next = 9;
@@ -455,22 +468,20 @@ var Groups = function () {
 
                 return _context5.abrupt('return', res.status(400).json({
                   status: 400,
-                  error: {
-                    message: 'only an admin can add a user to a group.'
-                  }
+                  error: 'only an admin can add a user to a group.'
+
                 }));
 
               case 17:
-                console.log(userExists);
-                _context5.next = 20;
-                return _index2.default.query('SELECT * FROM groupMembers WHERE userId=$1 AND id=$2', [userExists.userid, id]);
+                _context5.next = 19;
+                return _index2.default.query('SELECT * FROM groupMembers WHERE email=$1 AND id=$2', [userExists.email, id]);
 
-              case 20:
+              case 19:
                 _ref10 = _context5.sent;
                 rowCount = _ref10.rowCount;
 
                 if (!(rowCount > 0)) {
-                  _context5.next = 24;
+                  _context5.next = 23;
                   break;
                 }
 
@@ -479,15 +490,15 @@ var Groups = function () {
                   error: 'the user is already a member of the group'
                 }));
 
-              case 24:
+              case 23:
                 userQuery = {
                   text: 'INSERT INTO groupMembers(id,name,userId,email) VALUES($1,$2,$3,$4) RETURNING *',
                   values: ['' + userAdmin.id, '' + userAdmin.name, '' + userExists.id, '' + email]
                 };
-                _context5.next = 27;
+                _context5.next = 26;
                 return _index2.default.query(userQuery);
 
-              case 27:
+              case 26:
                 _ref11 = _context5.sent;
                 rows = _ref11.rows;
                 return _context5.abrupt('return', res.status(200).json({
@@ -497,8 +508,8 @@ var Groups = function () {
                   }]
                 }));
 
-              case 32:
-                _context5.prev = 32;
+              case 31:
+                _context5.prev = 31;
                 _context5.t0 = _context5['catch'](4);
 
                 console.log(_context5.t0);
@@ -509,12 +520,12 @@ var Groups = function () {
                   }
                 }));
 
-              case 36:
+              case 35:
               case 'end':
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[4, 32]]);
+        }, _callee5, this, [[4, 31]]);
       }));
 
       function createUser(_x9, _x10) {
@@ -543,7 +554,10 @@ var Groups = function () {
                   break;
                 }
 
-                return _context6.abrupt('return', res.status(400).json({ status: 404, message: 'invalid route' }));
+                return _context6.abrupt('return', res.status(400).json({
+                  status: 404,
+                  error: 'invalid route'
+                }));
 
               case 6:
                 _context6.next = 8;
@@ -559,32 +573,29 @@ var Groups = function () {
 
                 return _context6.abrupt('return', res.status(400).json({
                   status: 400,
-                  error: {
-                    message: 'only an admin can delete a user from a group.'
-                  }
+                  error: 'only an admin can delete a user from a group.'
+
                 }));
 
               case 11:
                 query = {
                   text: 'DELETE FROM groupMembers WHERE id=' + id + ' AND userId=' + userId
                 };
+                _context6.next = 14;
+                return _index2.default.query(query);
 
-                _index2.default.query(query);
+              case 14:
                 return _context6.abrupt('return', res.status(200).json({
                   status: 200,
-                  data: 'User  with id => ' + id + ', deleted from the group ' + userAdmin.name + ' successfully.'
+                  data: 'User  with id => ' + userId + ', deleted from the group ' + userAdmin.name + ' successfully.'
                 }));
 
-              case 16:
-                _context6.prev = 16;
+              case 17:
+                _context6.prev = 17;
                 _context6.t0 = _context6['catch'](3);
-
-                console.log(_context6.t0);
                 return _context6.abrupt('return', res.status(500).json({
                   status: 500,
-                  error: {
-                    message: 'An error occured while adding the user to the group.'
-                  }
+                  error: 'An error occured while adding the user to the group.'
                 }));
 
               case 20:
@@ -592,7 +603,7 @@ var Groups = function () {
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[3, 16]]);
+        }, _callee6, this, [[3, 17]]);
       }));
 
       function deleteUser(_x11, _x12) {
@@ -602,72 +613,47 @@ var Groups = function () {
       return deleteUser;
     }()
   }, {
-    key: 'newMessage',
+    key: 'getUsers',
     value: function () {
       var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-        var token, decoded, senderId, _req$body, subject, message, parentMessageId, reqId, _grpValidator, errors, Valid, userExists, receiverId, query, _ref14, rows;
+        var token, id, query, _ref14, rows;
 
         return regeneratorRuntime.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                token = req.body.token || req.query.token || req.headers['x-access-token'];
-                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
-                senderId = decoded.userId;
-                _req$body = req.body, subject = _req$body.subject, message = _req$body.message, parentMessageId = _req$body.parentMessageId;
-                reqId = req.params.id;
-                _context7.prev = 5;
-                _grpValidator = (0, _grpValidator3.default)(req.body), errors = _grpValidator.errors, Valid = _grpValidator.Valid;
+                token = req.headers['x-access-token'];
+                id = req.params.id;
+                _context7.prev = 2;
 
-                if (Valid) {
-                  _context7.next = 9;
+                if (!Number.isNaN(Number(id))) {
+                  _context7.next = 5;
                   break;
                 }
 
                 return _context7.abrupt('return', res.status(400).json({
-                  status: 400,
-                  error: errors
-                }));
-
-              case 9:
-                _context7.next = 11;
-                return _index2.default.query('SELECT * FROM groupMembers WHERE id =$1 AND UserId=$2', [reqId, decoded.userId]);
-
-              case 11:
-                userExists = _context7.sent.rows[0];
-
-                if (userExists) {
-                  _context7.next = 14;
-                  break;
-                }
-
-                return _context7.abrupt('return', res.status(404).json({
                   status: 404,
-                  error: 'Sorry, no group for this user'
+                  error: 'invalid route'
                 }));
 
-              case 14:
-                receiverId = userExists.id;
+              case 5:
                 query = {
-                  text: 'INSERT INTO groupMessages(subject,message,parentMessageId, senderId, groupId) VALUES($1,$2,$3,$4,$5) RETURNING *',
-                  values: ['' + subject, '' + message, '' + parentMessageId, '' + senderId, '' + receiverId]
+                  text: 'SELECT * FROM groupMembers WHERE id = ' + id + ';'
                 };
-                _context7.next = 18;
+                _context7.next = 8;
                 return _index2.default.query(query);
 
-              case 18:
+              case 8:
                 _ref14 = _context7.sent;
                 rows = _ref14.rows;
-                return _context7.abrupt('return', res.status(201).json({
-                  status: 201,
-                  data: [{
-                    details: rows[0]
-                  }]
+                return _context7.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: rows
                 }));
 
-              case 23:
-                _context7.prev = 23;
-                _context7.t0 = _context7['catch'](5);
+              case 13:
+                _context7.prev = 13;
+                _context7.t0 = _context7['catch'](2);
 
                 console.log(_context7.t0);
                 return _context7.abrupt('return', res.status(500).json({
@@ -677,19 +663,187 @@ var Groups = function () {
                   }
                 }));
 
-              case 27:
+              case 17:
               case 'end':
                 return _context7.stop();
             }
           }
-        }, _callee7, this, [[5, 23]]);
+        }, _callee7, this, [[2, 13]]);
       }));
 
-      function newMessage(_x13, _x14) {
+      function getUsers(_x13, _x14) {
         return _ref13.apply(this, arguments);
       }
 
+      return getUsers;
+    }()
+  }, {
+    key: 'newMessage',
+    value: function () {
+      var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+        var token, decoded, senderId, id, _req$body, subject, message, reqId, _grpValidator, errors, Valid, userExists, groupId, query, _ref16, rows;
+
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                token = req.body.token || req.query.token || req.headers['x-access-token'];
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                senderId = decoded.userId;
+                id = req.params.id;
+                _req$body = req.body, subject = _req$body.subject, message = _req$body.message;
+                reqId = req.params.id;
+                _context8.prev = 6;
+                _grpValidator = (0, _grpValidator3.default)(req.body), errors = _grpValidator.errors, Valid = _grpValidator.Valid;
+
+                if (Valid) {
+                  _context8.next = 10;
+                  break;
+                }
+
+                return _context8.abrupt('return', res.status(400).json({
+                  status: 400,
+                  error: errors
+                }));
+
+              case 10:
+                _context8.next = 12;
+                return _index2.default.query('SELECT * FROM groupMembers WHERE id =$1 AND UserId=$2', [reqId, decoded.userId]);
+
+              case 12:
+                userExists = _context8.sent.rows[0];
+
+                if (userExists) {
+                  _context8.next = 15;
+                  break;
+                }
+
+                return _context8.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Sorry, no group for this user'
+                }));
+
+              case 15:
+                groupId = userExists.id;
+                query = {
+                  text: 'INSERT INTO groupMessages(subject,message,senderId,groupId,messageId) VALUES($1,$2,$3,$4,$5) RETURNING *',
+                  values: ['' + subject, '' + message, '' + senderId, '' + groupId, '' + id]
+                };
+                _context8.next = 19;
+                return _index2.default.query(query);
+
+              case 19:
+                _ref16 = _context8.sent;
+                rows = _ref16.rows;
+                return _context8.abrupt('return', res.status(201).json({
+                  status: 201,
+                  data: {
+                    details: rows
+                  }
+                }));
+
+              case 24:
+                _context8.prev = 24;
+                _context8.t0 = _context8['catch'](6);
+
+                console.log(_context8.t0);
+                return _context8.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: 'An error occured while sending the message.'
+                }));
+
+              case 28:
+              case 'end':
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this, [[6, 24]]);
+      }));
+
+      function newMessage(_x15, _x16) {
+        return _ref15.apply(this, arguments);
+      }
+
       return newMessage;
+    }()
+  }, {
+    key: 'getMessage',
+    value: function () {
+      var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+        var token, decoded, id, query, _ref18, rows, rowCount;
+
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                token = req.body.token || req.query.token || req.headers['x-access-token'];
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                id = req.params.id;
+                _context9.prev = 3;
+
+                if (!Number.isNaN(Number(id))) {
+                  _context9.next = 6;
+                  break;
+                }
+
+                return _context9.abrupt('return', res.status(400).json({
+                  status: 404,
+                  error: 'invalid route'
+                }));
+
+              case 6:
+                query = {
+                  text: 'SELECT groupMessages.subject, groupMessages.createdOn, groupMessages.message,groupMessages.messageId,groupMessages.groupId,\n        users.firstName, users.lastName\n        FROM (groupMessages\n        JOIN users ON groupMessages.senderId = users.id)\n        WHERE groupMessages.senderId = ' + decoded.userId + ' AND groupId =' + id + ' ORDER BY messageId DESC'
+                };
+                _context9.next = 9;
+                return _index2.default.query(query);
+
+              case 9:
+                _ref18 = _context9.sent;
+                rows = _ref18.rows;
+                rowCount = _ref18.rowCount;
+
+                console.log(rows);
+
+                if (!(rowCount < 1)) {
+                  _context9.next = 15;
+                  break;
+                }
+
+                return _context9.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'no messages'
+                }));
+
+              case 15:
+                return _context9.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: rows
+                }));
+
+              case 18:
+                _context9.prev = 18;
+                _context9.t0 = _context9['catch'](3);
+
+                console.log(_context9.t0);
+                return _context9.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: 'Internal server error'
+                }));
+
+              case 22:
+              case 'end':
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this, [[3, 18]]);
+      }));
+
+      function getMessage(_x17, _x18) {
+        return _ref17.apply(this, arguments);
+      }
+
+      return getMessage;
     }()
   }]);
 

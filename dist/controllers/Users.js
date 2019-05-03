@@ -119,6 +119,8 @@ var Users = function () {
               case 21:
                 _context.prev = 21;
                 _context.t0 = _context['catch'](1);
+
+                console.log(_context.t0);
                 return _context.abrupt('return', res.status(500).json({
                   status: 500,
                   error: {
@@ -126,7 +128,7 @@ var Users = function () {
                   }
                 }));
 
-              case 24:
+              case 25:
               case 'end':
                 return _context.stop();
             }
