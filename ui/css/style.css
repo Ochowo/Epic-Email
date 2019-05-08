@@ -51,6 +51,7 @@ a {
     padding: 20px 65px ;
 
 }
+
 .header2 {
     border-bottom: 1px solid #EDEDED;
 }
@@ -101,8 +102,11 @@ a {
     box-shadow: 5px 10px 28px 0.1px #b3b1b1;
 
 }
+.inc{
+    padding:12%;
+}
 .logo-box {
-    height:30px;
+    height:40px;
     
 }
 .boxx-tex {
@@ -383,6 +387,11 @@ th {
 .crrr{
     padding-top: 7%;
 }
+#feedbackspe,
+#ppp{
+    color: green;
+}
+
 .bghg {
     color:#EDEDED;
     font-size:100px;
@@ -590,6 +599,10 @@ th {
     width:85%;
     padding-right: 10%;
 }
+.wrapper2{
+    display:none;
+}
+#feedbacke,
 #feedbacknn,
 #feedback,
 #feedback1,

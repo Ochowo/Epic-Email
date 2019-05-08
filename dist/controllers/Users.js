@@ -10,6 +10,14 @@ var _dotenv = require('dotenv');
 
 var _dotenv2 = _interopRequireDefault(_dotenv);
 
+var _nodemailer = require('nodemailer');
+
+var _nodemailer2 = _interopRequireDefault(_nodemailer);
+
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
 var _index = require('../db/index');
 
 var _index2 = _interopRequireDefault(_index);
@@ -227,6 +235,206 @@ var Users = function () {
       }
 
       return signin;
+    }()
+  }, {
+    key: 'reset',
+    value: function () {
+      var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+        var email, _emailVal, errors, isValid, text, _ref6, rows, user, token, mailOptions, transporter;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                email = req.body.email;
+                _context3.prev = 1;
+                _emailVal = (0, _index3.emailVal)(req.body), errors = _emailVal.errors, isValid = _emailVal.isValid;
+
+                if (isValid) {
+                  _context3.next = 5;
+                  break;
+                }
+
+                return _context3.abrupt('return', res.status(400).json({
+                  status: 400,
+                  error: errors
+                }));
+
+              case 5:
+                text = 'SELECT * FROM users WHERE email = $1';
+                _context3.next = 8;
+                return _index2.default.query(text, [email]);
+
+              case 8:
+                _ref6 = _context3.sent;
+                rows = _ref6.rows;
+
+                if (rows[0]) {
+                  _context3.next = 12;
+                  break;
+                }
+
+                return _context3.abrupt('return', res.status(404).json({ status: 404, error: 'Authentication failed. User not found' }));
+
+              case 12:
+                user = rows[0];
+                token = _authHelper2.default.generateToken(user.id, user.email);
+                mailOptions = {
+                  from: 'noreply@epicmail.com',
+                  to: email,
+                  subject: 'EPIC MAIL Reset Password Link',
+                  html: '<h1> reset link </h1>\n       <p> click on the\n      <a href= hhttps://epic-mail04.herokuapp.com/pass.html?token=' + token + '>link</a>\n      to reset your password </p>\n    '
+                };
+                transporter = _nodemailer2.default.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    user: process.env.SENDER_EMAIL,
+                    pass: process.env.SENDER_PASSWORD
+                  }
+                });
+
+                transporter.sendMail(mailOptions);
+                return _context3.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: {
+                    message: 'Check your email for reset password link',
+                    email: email,
+                    token: token
+                  }
+                }));
+
+              case 20:
+                _context3.prev = 20;
+                _context3.t0 = _context3['catch'](1);
+
+                console.log(_context3.t0);
+                return _context3.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: 'An error occured while trying to sign you in, please try again.'
+                }));
+
+              case 24:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this, [[1, 20]]);
+      }));
+
+      function reset(_x5, _x6) {
+        return _ref5.apply(this, arguments);
+      }
+
+      return reset;
+    }()
+  }, {
+    key: 'resetPassword',
+    value: function () {
+      var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
+        var token, decoded, password, _passVal, errors, isValid, text, _ref8, rows, user, hashpassword, Query, _ref9, rowCount, email;
+
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                token = req.params.token;
+
+                console.log(token);
+                decoded = _jsonwebtoken2.default.verify(token, process.env.SECRET);
+                password = req.body.password;
+                _passVal = (0, _index3.passVal)(req.body), errors = _passVal.errors, isValid = _passVal.isValid;
+
+                if (isValid) {
+                  _context4.next = 7;
+                  break;
+                }
+
+                return _context4.abrupt('return', res.status(400).json({
+                  status: 400,
+                  error: errors
+                }));
+
+              case 7:
+                text = 'SELECT * FROM users WHERE email = $1';
+                _context4.next = 10;
+                return _index2.default.query(text, [decoded.email]);
+
+              case 10:
+                _ref8 = _context4.sent;
+                rows = _ref8.rows;
+                user = rows[0];
+
+                console.log(user, 'pppp');
+
+                if (user) {
+                  _context4.next = 16;
+                  break;
+                }
+
+                return _context4.abrupt('return', {
+                  status: 404,
+                  error: 'User not found'
+                });
+
+              case 16:
+                hashpassword = _authHelper2.default.hashPassword(password);
+                _context4.prev = 17;
+                Query = {
+                  text: 'UPDATE users SET password = $1 WHERE email= $2',
+                  values: ['' + hashpassword, '' + decoded.email]
+                };
+                _context4.next = 21;
+                return _index2.default.query(Query);
+
+              case 21:
+                _ref9 = _context4.sent;
+                rowCount = _ref9.rowCount;
+
+                console.log(rowCount, 'popopo');
+
+                if (!(rowCount > 1)) {
+                  _context4.next = 26;
+                  break;
+                }
+
+                return _context4.abrupt('return', res.status(404).json({
+                  status: 404,
+                  error: 'Password reset unsuccesful'
+                }));
+
+              case 26:
+                email = decoded.email.email;
+                return _context4.abrupt('return', res.status(200).json({
+                  status: 200,
+                  data: {
+                    message: 'password reset sucessfull',
+                    email: email
+                  }
+                }));
+
+              case 30:
+                _context4.prev = 30;
+                _context4.t0 = _context4['catch'](17);
+
+                console.log(_context4.t0);
+                return _context4.abrupt('return', res.status(500).json({
+                  status: 500,
+                  error: 'internal server error'
+                }));
+
+              case 34:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this, [[17, 30]]);
+      }));
+
+      function resetPassword(_x7, _x8) {
+        return _ref7.apply(this, arguments);
+      }
+
+      return resetPassword;
     }()
   }]);
 

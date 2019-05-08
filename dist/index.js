@@ -65,7 +65,7 @@ app.use('/api/v1', _index.messages);
 app.use('/api/v1/groups', _index.groups);
 
 app.get('/', function (req, res) {
-  res.sendFile(_path2.default.resolve('./build', 'index.html'));
+  res.send('Visit /api/v1 to view API cheers!!!');
 });
 var port = process.env.PORT || 8000;
 app.listen(process.env.PORT || 8000, function () {

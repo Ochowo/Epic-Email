@@ -9,7 +9,7 @@
 <body>
     <header class="header uyu">
         <nav class="nav">
-        <div class="logo lo"><a href = "#"><img src="img/logo.svg"></a> </div>
+        <div class="logo lo"><a href = "https://epic-mail04.herokuapp.com"><img src="img/logo.svg"></a> </div>
         <div class="help"><a href ="#">Need help?</a></div>
         </nav>
     </header>
@@ -20,7 +20,7 @@
             </div>
             <div class="pull-right csd">
                 <form name="epic-sign" class="box bxx" id="bxx" action="#" method="POST">
-                    <div class="logo-box"><a href = "#"><img src="img/logo.svg"></a></div>
+                    <div class="logo-box"><a href = "https://epic-mail04.herokuapp.com"><img src="img/logo.svg"></a></div>
                     <h2 class="boxx-tex">Sign in to use Epic Mail</h2>
                     <input class="input email3" type="text" name="email" placeholder="Enter your email here" oninput="clearFeedback('#feedback11')"><br>
                     <div id="feedback11"></div>
@@ -32,7 +32,7 @@
                     <button class="create" id = "loggg">Create an account</button>
                 </form>
                 <form name = "epic-sign"class="box bxx" id="signn-form" action="#" method="POST">
-                    <div class="logo-box"><a href = "#"><img src="img/logo.svg"></a></div>
+                    <div class="logo-box"><a href = "https://epic-mail04.herokuapp.com"><img src="img/logo.svg"></a></div>
                     <h2 class="boxx-tex">Register On Epic Mail</h2>
                     <input class="input name1 name2" type="text" placeholder="First name" name="name" oninput="clearFeedback('#feedback3')"><br>
                     <span class="feedback" id="feedback3"></span>
@@ -49,10 +49,12 @@
                     <button class="create name3" id = "sigg">Login</button>
                 </form>
                 <form name = "epic-sign"class="box bxx" id="pass-form">
-                        <div class="logo-box"><a href = "#"><img src="img/logo.svg"></a></div>
+                        <div class="logo-box"><a href = "https://epic-mail04.herokuapp.com"><img src="img/logo.svg"></a></div>
                         <h2 class="boxx-tex">Reset your Password</h2>
-                        <input class ="input name1"  type="text" placeholder="Enter Email" name="email" required><br>
-                        <button class="logbtn name2"><a href="signup.html">Submit</a></button>
+                        <span id="feedbackspe"></span>
+                        <input class ="input name1"  id="emai" type="text" placeholder="Enter Email" name="email" oninput="clearFeedback('#feedbacke')"><br>
+                        <span id="feedbacke"></span>
+                        <button class="logbtn name2"><span class="resetText">Submit</span><span class="spinner" id="pion"></span></button></button>
                         <button class="create name3" id = "logId">Login</button>
                     </form>
                 
