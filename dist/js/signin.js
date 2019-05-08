@@ -82,6 +82,57 @@ var validate = function validate() {
     document.querySelector('.signinText').innerHTML = 'Loading';
   }
 };
+// eslint-disable-next-line no-unused-vars
 function clearFeedback(val) {
   document.querySelector(val).style.display = 'none';
 }
+
+var send = document.getElementById('pass-form');
+var resetPassword = function resetPassword(event) {
+  event.preventDefault();
+  console.log('msg======>l');
+  var email = document.querySelector('#emai').value;
+  var feedbacke = document.querySelector('#feedbacke');
+  var feedbackspe = document.querySelector('#feedbackspe');
+
+  var emai = document.querySelector('#emai');
+  var data = {
+    email: email
+  };
+  var url = 'http://127.0.0.1:8000/api/v1/auth/reset';
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(function (res) {
+    return res.json();
+  }).then(function (resp) {
+    console.log(resp);
+    if (resp.status === 200) {
+      document.querySelector('#pion').style.display = 'none';
+      localStorage.setItem('x-access-token', resp.data.token);
+      emai.style.display = 'none';
+      feedbackspe.innerHTML = 'Check your email for the reset password link';
+      feedbackspe.style.lineHeight = '4px';
+      feedbackspe.style.fontSize = '16px';
+      document.querySelector('.boxx-tex').style.backgroundColor = 'green';
+      document.querySelector('.resetText').innerHTML = 'Message Sent';
+      send.reset();
+    } else if (resp.status === 400) {
+      feedbacke.style.display = 'block';
+      feedbacke.innerHTML = resp.error.email;
+      document.querySelector('#pion').style.display = 'none';
+    } else if (resp.status === 404) {
+      feedbacke.style.display = 'block';
+      feedbacke.innerHTML = resp.error;
+      document.querySelector('#pion').style.display = 'none';
+    } else if (resp.status === 500) {
+      feedbacke.style.display = 'block';
+      feedbacke.innerHTML = resp.error;
+      document.querySelector('#pion').style.display = 'none';
+    }
+  });
+};
+send.addEventListener('submit', resetPassword);

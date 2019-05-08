@@ -1,8 +1,12 @@
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 import db from '../db/index';
 import 'babel-polyfill';
 import authHelper from './authHelper';
-import { checkSigninInput, checkSignupInput } from '../validation/index';
+import {
+  checkSigninInput, checkSignupInput, emailVal, passVal,
+} from '../validation/index';
 
 dotenv.config();
 /**
@@ -61,7 +65,7 @@ class Users {
         }],
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         status: 500,
         error: {
@@ -87,10 +91,10 @@ class Users {
       const text = 'SELECT * FROM users WHERE email = $1';
       const { rows } = await db.query(text, [req.body.email]);
       if (!rows[0]) {
-        return res.status(404).json({ status: 404, error: 'Authentication failed. User not found'  });
+        return res.status(404).json({ status: 404, error: 'Authentication failed. User not found' });
       }
       if (!authHelper.comparePassword(rows[0].password, password)) {
-        return res.status(401).json({ status: 401, error: 'Authentication failed. Wrong password'  });
+        return res.status(401).json({ status: 401, error: 'Authentication failed. Wrong password' });
       }
       const user = rows[0];
       const token = authHelper.generateToken(user.id, user.email);
@@ -109,6 +113,119 @@ class Users {
         error: {
           message: 'An error occured while trying to sign you in, please try again.',
         },
+      });
+    }
+  }
+
+  static async reset(req, res) {
+    const {
+      email,
+    } = req.body;
+    try {
+      const { errors, isValid } = emailVal(req.body);
+      if (!isValid) {
+        return res.status(400).json({
+          status: 400,
+          error: errors,
+        });
+      }
+      const text = 'SELECT * FROM users WHERE email = $1';
+      const { rows } = await db.query(text, [email]);
+      if (!rows[0]) {
+        return res.status(404).json({ status: 404, error: 'Authentication failed. User not found' });
+      }
+      const user = rows[0];
+      const token = authHelper.generateToken(user.id, user.email);
+      const mailOptions = {
+        from: 'noreply@epicmail.com',
+        to: email,
+        subject: 'EPIC MAIL Reset Password Link',
+        html: `<h1> reset link </h1>
+       <p> click on the
+      <a href= hhttps://epic-mail04.herokuapp.com/pass.html?token=${token}>link</a>
+      to reset your password </p>
+    `,
+      };
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SENDER_EMAIL,
+          pass: process.env.SENDER_PASSWORD,
+        },
+      });
+      transporter.sendMail(mailOptions);
+      return res.status(200).json({
+        status: 200,
+        data: {
+          message: 'Check your email for reset password link',
+          email,
+          token,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: 'An error occured while trying to sign you in, please try again.',
+      });
+    }
+  }
+
+  static async resetPassword(req, res) {
+    const {
+      token,
+    } = req.params;
+    console.log(token)
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const {
+      password,
+    } = req.body;
+    const { errors, isValid } = passVal(req.body);
+    if (!isValid) {
+      return res.status(400).json({
+        status: 400,
+        error: errors,
+      });
+    }
+    const text = 'SELECT * FROM users WHERE email = $1';
+    const { rows } = await db.query(text, [decoded.email]);
+    const user = rows[0];
+    console.log(user, 'pppp');
+    if (!user) {
+      return {
+        status: 404,
+        error: 'User not found',
+      };
+    }
+    const hashpassword = authHelper.hashPassword(password);
+    try {
+      const Query = {
+        text: 'UPDATE users SET password = $1 WHERE email= $2',
+        values: [`${hashpassword}`, `${decoded.email}`],
+      };
+      const { rowCount } = await db.query(Query);
+      console.log(rowCount, 'popopo');
+      if (rowCount > 1) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Password reset unsuccesful',
+        });
+      }
+      const {
+        email,
+      } = decoded.email;
+      return res.status(200).json({
+        status: 200,
+        data: {
+          message: 'password reset sucessfull',
+          email,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        error: 'internal server error',
       });
     }
   }
