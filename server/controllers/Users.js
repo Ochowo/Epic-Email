@@ -65,12 +65,10 @@ class Users {
         }],
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return res.status(500).json({
         status: 500,
-        error: {
-          message: 'An error occured while trying to sign you up, please try again.',
-        },
+        error: 'An error occured while trying to sign you up, please try again.',
       });
     }
   }

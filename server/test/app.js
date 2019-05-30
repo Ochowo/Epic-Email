@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import 'babel-polyfill';
 // import jwt from 'jsonwebtoken';
 import app from '../index';
+require ("index.css");
 
 dotenv.config();
 chai.use(chaiHttp);
@@ -72,7 +73,7 @@ const newMember = {
   name: 'oc',
 };
 describe('Epic Mail Test Suite', () => {
-  describe('POST auth/signup - register a new user', () => {
+  describe('POST auth/signup - register a new user', () => {\
     it('should not register a user if email is invalid', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signup')
