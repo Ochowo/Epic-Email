@@ -446,7 +446,7 @@ describe('Group', () => {
           done();
         });
     });
-    it('should return server error for get all group member controller', async () => {
+    it('should return server error for group member controller', async () => {
       const req = { params: { id: '7bc8c0fe-9e2a-4a6a-9e11-f6d85b5d8aba' }, user: { userId: 'f1e2e1c8-6a90-4bcd-b349-49f989d311d6' } };
       const res = {
         status() {},
