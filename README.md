@@ -1,5 +1,4 @@
 # Epic-Mail
-[![Build Status](https://travis-ci.com/Ochowo/Epic-Mail.svg?branch=develop)](https://travis-ci.com/Ochowo/Epic-Mail)
 [![Coverage Status](https://coveralls.io/repos/github/Ochowo/Epic-Mail/badge.svg?branch=develop)](https://coveralls.io/github/Ochowo/Epic-Mail?branch=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/740e0250c12e09160ffb/maintainability)](https://codeclimate.com/github/Ochowo/Epic-Mail/maintainability)
 
