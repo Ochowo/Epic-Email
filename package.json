@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node --require babel-polyfill ./build/index.js",
+    "start": "nodel ./build/index.js",
     "clean": "rm -rf ./build && mkdir build",
     "build": "babel ./src -d build",
     "migration": "npx sequelize-cli db:migrate",
