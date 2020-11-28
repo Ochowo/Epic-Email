@@ -9,9 +9,9 @@
   "scripts": {
     "start": "node ./build/index.js",
     "clean": "rm -rf ./build && mkdir build",
-    "build": "npm run clean && babel ./src -d build",
+    "build:prod": "npm run clean && babel ./src -d build",
     "migration": "npx sequelize-cli db:migrate",
-    "heroku-postbuild": "npm run build && npm run migration",
+    "heroku-postbuild": "npm run build:prod && npm run migration",
     "start:dev": "nodemon --exec babel-node ./src/index.js",
     "test": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && cross-env NODE_ENV=test nyc --require @babel/register  mocha  ./test/index.spec.js --timeout 5000 --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
