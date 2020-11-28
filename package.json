@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "nodel ./build/index.js",
+    "start": "node ./build/index.js",
     "clean": "rm -rf ./build && mkdir build",
     "build": "babel ./src -d build",
     "migration": "npx sequelize-cli db:migrate",
