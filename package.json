@@ -11,7 +11,7 @@
     "clean": "rm -rf ./build && mkdir build",
     "build": "babel ./src -d build",
     "migration": "npx sequelize-cli db:migrate",
-    "heroku-postbuild": "npm run build && yarn run migration",
+    "heroku-postbuild": "npm run build && npm run migration",
     "start:dev": "nodemon --exec babel-node ./src/index.js",
     "test": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && cross-env NODE_ENV=test nyc --require @babel/register  mocha  ./test/index.spec.js --timeout 5000 --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
