@@ -4,7 +4,7 @@
   "description": "",
  "engines": {
     "node": "12.16.1"
-  }
+  },
   "main": "index.js",
   "scripts": {
     "start": "node --require babel-polyfill ./build/index.js",
