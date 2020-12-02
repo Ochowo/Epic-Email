@@ -39,8 +39,12 @@ class Authenticate {
         response.setError(403, 'Token not verified');
         return response.send(res);
       }
-      const { userId, email } = decoded;
-      req.user = { userId, email };
+      const {
+        userId, email, firstName, lastName,
+      } = decoded;
+      req.user = {
+        userId, email, firstName, lastName,
+      };
       return next();
     });
     return null;
