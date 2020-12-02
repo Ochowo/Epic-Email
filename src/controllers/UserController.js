@@ -15,7 +15,7 @@ class UserController {
       const {
         id, firstName, lastName, email,
       } = user;
-      const token = Authenticate.generateToken(id, user.email);
+      const token = Authenticate.generateToken(id, user.email, user.firstName, user.lastName);
       if (created) {
         const data = {
           user: {

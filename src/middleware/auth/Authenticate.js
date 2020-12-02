@@ -10,10 +10,10 @@ class Authenticate {
    * @param  {} id
    * @param  {} email
    */
-  static generateToken(id, email) {
+  static generateToken(id, email, firstName, lastName) {
     const token = jwt.sign(
       {
-        userId: id, email,
+        userId: id, email, firstName, lastName,
       },
       process.env.SECRET_KEY,
       {
