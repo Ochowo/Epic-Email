@@ -61,6 +61,22 @@ class UserController {
     response.setError(401, 'Invalid credentials');
     return response.send(res);
   }
+
+  static async getAllUsers(req, res) {
+    try {
+      const users = await userService.getAllUsers();
+      console.log(users, 'afh');
+      if (users.length < 1) {
+        response.setSuccess(404, 'Users not found');
+      } else {
+        response.setSuccess(200, null, users);
+      }
+      return response.send(res);
+    } catch (error) {
+      response.setError(500, error);
+      return response.send(res);
+    }
+  }
 }
 
 export default UserController;

@@ -11,29 +11,28 @@ class UserService {
     });
   }
 
-  static async getAllUsers(userId) {
+  static async getAllUsers() {
     try {
-      return await User.findAll({
-        include: [
-          {
-            model: User,
-          },
-          {
-            model: Message,
-          },
-          {
-            model: Group,
-          },
-        ],
-        where: { userId },
-      });
+      return await User.findAll({});
     } catch (error) {
       throw (error);
     }
   }
 
   static findUser(email) {
-    return User.findOne({ where: { email } });
+    return User.findOne({
+      include: [
+        {
+          model: User,
+        },
+        {
+          model: Message,
+        },
+        {
+          model: Group,
+        }],
+      where: { email },
+    });
   }
 }
 
