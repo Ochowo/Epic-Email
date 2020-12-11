@@ -80,7 +80,7 @@ class UserController {
   }
 
   static async getAUser(req, res) {
-    const { userId } = req.user;
+    const { userId } = req.param;
     try {
       const users = await userService.getAUser(userId);
       console.log(users, 'afh');
