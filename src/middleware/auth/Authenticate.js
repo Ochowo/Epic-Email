@@ -17,7 +17,7 @@ class Authenticate {
       },
       process.env.SECRET_KEY,
       {
-        expiresIn: '7d',
+        expiresIn: '1d',
       },
     );
     return token;
@@ -35,6 +35,7 @@ class Authenticate {
       return response.send(res);
     }
     jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+      console.log(decoded, 'pppppppppppppppppppp');
       if (err) {
         response.setError(403, 'Token not verified');
         return response.send(res);

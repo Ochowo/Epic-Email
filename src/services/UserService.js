@@ -23,9 +23,6 @@ class UserService {
     return User.findOne({
       include: [
         {
-          model: User,
-        },
-        {
           model: Message,
         },
         {

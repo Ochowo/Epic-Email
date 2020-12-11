@@ -25,6 +25,7 @@ class MessageController {
   }
 
   static async getAllMessages(req, res) {
+    
     const { userId } = req.user;
     try {
       const messages = await messageService.getAllMessages(userId);
@@ -43,6 +44,7 @@ class MessageController {
 
   static async getMessageByFolder(req, res) {
     console.log('hhh');
+    console.log(req.user, 'pulse');
     const { userId } = req.user;
     const { name } = req.query;
     try {
@@ -133,6 +135,7 @@ class MessageController {
   }
 
   static async createMessage(req, res) {
+    console.log(req.user, 'pol');
     const { userId, email } = req.user;
     const {
       subject,

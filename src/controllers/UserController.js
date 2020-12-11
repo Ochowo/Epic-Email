@@ -12,6 +12,7 @@ class UserController {
   static async registerUser(req, res) {
     try {
       const [user, created] = await userService.signup(req.body, req.body.email);
+      console.log(user)
       const {
         id, firstName, lastName, email,
       } = user;
@@ -53,7 +54,7 @@ class UserController {
       return response.send(res);
     }
     if (user.comparePassword(password, user)) {
-      const token = Authenticate.generateToken(user.id, user.email);
+      const token = Authenticate.generateToken(user.id, user.email, user.firstName, user.lastName);
       const data = { user, token };
       response.setSuccess(200, 'Login successful', data);
       return response.send(res);
