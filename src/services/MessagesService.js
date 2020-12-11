@@ -1,13 +1,16 @@
 /* eslint-disable no-useless-catch */
 import database from '../models';
 
-const { Message, Content } = database;
+const { Message, Content, User } = database;
 
 class MessageService {
   static async getAllMessages(userId) {
     try {
       return await Message.findAll({
         include: [
+          {
+            model: User,
+          },
           {
             model: Content,
           },
@@ -25,6 +28,9 @@ class MessageService {
         include: [
           {
             model: Content,
+          },
+          {
+            model: User,
           },
         ],
         where: { userId, folderName },
@@ -57,6 +63,9 @@ class MessageService {
         include: [
           {
             model: Content,
+          },
+          {
+            model: User,
           },
         ],
         where: { id },

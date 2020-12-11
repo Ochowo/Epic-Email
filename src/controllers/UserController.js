@@ -77,6 +77,23 @@ class UserController {
       return response.send(res);
     }
   }
+
+  static async getAUser(req, res) {
+    const { userId } = req.user;
+    try {
+      const users = await userService.getAUser(userId);
+      console.log(users, 'afh');
+      if (users.length < 1) {
+        response.setSuccess(404, 'Users not found');
+      } else {
+        response.setSuccess(200, null, users);
+      }
+      return response.send(res);
+    } catch (error) {
+      response.setError(500, error);
+      return response.send(res);
+    }
+  }
 }
 
 export default UserController;
