@@ -80,17 +80,20 @@ class UserController {
   }
 
   static async getAUser(req, res) {
-    const { userId } = req.params;
+    console.log('here again')
+    const { email } = req.query;
+    console.log(email, req.query)
     try {
-      const users = await userService.getAUser(userId);
+      const users = await userService.getAUser(email);
       console.log(users, 'afh');
-      if (users.length < 1) {
-        response.setSuccess(404, 'Users not found');
+      if (!users) {
+        response.setSuccess(404, 'User not found');
       } else {
         response.setSuccess(200, null, users);
       }
       return response.send(res);
     } catch (error) {
+      console.log(error)
       response.setError(500, error);
       return response.send(res);
     }

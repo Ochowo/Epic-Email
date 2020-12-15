@@ -25,7 +25,6 @@ class MessageController {
   }
 
   static async getAllMessages(req, res) {
-    
     const { userId } = req.user;
     try {
       const messages = await messageService.getAllMessages(userId);

@@ -19,7 +19,7 @@ class UserService {
     }
   }
 
-  static findUser(email) {
+  static getAUser(email) {
     return User.findOne({
       include: [
         {
