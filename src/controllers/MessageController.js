@@ -145,9 +145,9 @@ class MessageController {
       replyId,
       parentId,
       groupId,
+      receiverEmail,
       attatchments,
     } = req.body;
-    const receiverEmail = ['ochowoikongbeh@gmail.com']
     const receiver = receiverEmail.toString();
     const contentBody = {
       senderEmail: email,
