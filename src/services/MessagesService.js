@@ -2,9 +2,12 @@
 import database from '../models';
 
 const { Message, Content, User } = database;
+import paginationUtil from '../utils/paginationUtil';
 
 class MessageService {
-  static async getAllMessages(userId) {
+  static async getAllMessages(userId, page, pageSize) {
+    const { limit, offset } = paginationUtil.paginate(page, pageSize);
+
     try {
       return await Message.findAll({
         include: [
@@ -16,13 +19,21 @@ class MessageService {
           },
         ],
         where: { userId },
+        limit,
+        offset,
+        order: [
+          ['createdAt', 'DESC']
+        ]
       });
     } catch (error) {
       throw (error);
     }
   }
 
-  static async getMessageByFolder(userId, folderName) {
+  static async getMessageByFolder(userId, folderName, page, pageSize) {
+    
+    const { limit, offset } = paginationUtil.paginate(page, pageSize);
+
     try {
       return Message.findAll({
         include: [
@@ -34,6 +45,11 @@ class MessageService {
           },
         ],
         where: { userId, folderName },
+        limit,
+        offset,
+        order: [
+          ['createdAt', 'DESC']
+        ]
       });
     } catch (error) {
       console.log(error, 'error');

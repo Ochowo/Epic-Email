@@ -25,9 +25,11 @@ class MessageController {
   }
 
   static async getAllMessages(req, res) {
+    console.log('here')
     const { userId } = req.user;
+    const { page, pageSize } = req.query;
     try {
-      const messages = await messageService.getAllMessages(userId);
+      const messages = await messageService.getAllMessages(userId, page, pageSize);
       console.log(messages, 'afh');
       if (messages.length < 1) {
         response.setSuccess(404, 'Message not found');
@@ -36,6 +38,7 @@ class MessageController {
       }
       return response.send(res);
     } catch (error) {
+      console.log(error)
       response.setError(500, error);
       return response.send(res);
     }
@@ -45,9 +48,9 @@ class MessageController {
     console.log('hhh');
     console.log(req.user, 'pulse');
     const { userId } = req.user;
-    const { name } = req.query;
+    const { name, page, pageSize } = req.query;
     try {
-      const msgs = await messageService.getMessageByFolder(userId, name);
+      const msgs = await messageService.getMessageByFolder(userId, name, page, pageSize);
       if (msgs.length < 1) {
         console.log('naaaa');
         response.setSuccess(404, 'Message not found');
@@ -142,9 +145,9 @@ class MessageController {
       replyId,
       parentId,
       groupId,
-      receiverEmail,
       attatchments,
     } = req.body;
+    const receiverEmail = ['ochowoikongbeh@gmail.com']
     const receiver = receiverEmail.toString();
     const contentBody = {
       senderEmail: email,
