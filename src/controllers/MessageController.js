@@ -175,7 +175,7 @@ class MessageController {
         sentMessageBody.parentId = parentId != null ? parentId : null;
         sentMessageBody.replyId = replyId != null ? replyId : null;
         sentMessageBody.groupId = groupId != null ? groupId : null;
-        console.log(sentMessageBody)
+        console.log(sentMessageBody);
         const msgg = await messageService.createMessage(sentMessageBody);
         console.log(msgg, 'msgf');
         const idArray = [];

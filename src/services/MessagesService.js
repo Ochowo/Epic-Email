@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 import database from '../models';
+import paginationUtil from '../utils/paginationUtil';
 
 const { Message, Content, User } = database;
-import paginationUtil from '../utils/paginationUtil';
 
 class MessageService {
   static async getAllMessages(userId, page, pageSize) {
@@ -22,8 +22,8 @@ class MessageService {
         limit,
         offset,
         order: [
-          ['createdAt', 'DESC']
-        ]
+          ['createdAt', 'DESC'],
+        ],
       });
     } catch (error) {
       throw (error);
@@ -31,7 +31,6 @@ class MessageService {
   }
 
   static async getMessageByFolder(userId, folderName, page, pageSize) {
-    
     const { limit, offset } = paginationUtil.paginate(page, pageSize);
 
     try {
@@ -48,8 +47,8 @@ class MessageService {
         limit,
         offset,
         order: [
-          ['createdAt', 'DESC']
-        ]
+          ['createdAt', 'DESC'],
+        ],
       });
     } catch (error) {
       console.log(error, 'error');
