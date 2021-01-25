@@ -1,15 +1,15 @@
 /* eslint-disable no-useless-catch */
 import database from '../models';
-import paginationUtil from '../utils/paginationUtil';
+import { getPagination, getPagingData } from '../utils/paginationUtil';
 
 const { Message, Content, User } = database;
 
 class MessageService {
-  static async getAllMessages(userId, page, pageSize) {
-    const { limit, offset } = paginationUtil.paginate(page, pageSize);
+  static async getAllMessages(userId, page, size) {
+    const { limit, offset } = getPagination(page, size);
 
     try {
-      return await Message.findAll({
+      return await Message.findAndCountAll({
         include: [
           {
             model: User,
@@ -30,11 +30,11 @@ class MessageService {
     }
   }
 
-  static async getMessageByFolder(userId, folderName, page, pageSize) {
-    const { limit, offset } = paginationUtil.paginate(page, pageSize);
+  static async getMessageByFolder(userId, folderName, page, size) {
+    const { limit, offset } = getPagination(page, size);
 
     try {
-      return Message.findAll({
+      return Message.findAndCountAll({
         include: [
           {
             model: Content,

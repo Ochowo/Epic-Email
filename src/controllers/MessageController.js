@@ -1,5 +1,6 @@
 import Response from '../utils/response';
 import { messageService, userService, contentService } from '../services';
+import { getPagingData, getPagination } from '../utils/paginationUtil';
 
 const response = new Response();
 class MessageController {
@@ -34,7 +35,9 @@ class MessageController {
       if (messages.length < 1) {
         response.setSuccess(404, 'Message not found');
       } else {
-        response.setSuccess(200, null, messages);
+        const { limit } = getPagination(page, pageSize);
+        const resp = getPagingData(messages, page, limit);
+        response.setSuccess(200, null, resp);
       }
       return response.send(res);
     } catch (error) {
@@ -55,7 +58,9 @@ class MessageController {
         console.log('naaaa');
         response.setSuccess(404, 'Message not found');
       } else {
-        response.setSuccess(200, null, msgs);
+        const { limit } = getPagination(page, pageSize);
+        const resp = getPagingData(msgs, page, limit);
+        response.setSuccess(200, null, resp);
       }
       return response.send(res);
     } catch (error) {
